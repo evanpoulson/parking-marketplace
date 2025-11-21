@@ -72,7 +72,8 @@ export default function Navbar() {
                 </Link>
               </>
             ) : (
-              <div className="w-12"></div> {/* Spacer for alignment */}
+              // Spacer for alignment when logged out
+              <div className="w-12" />
             )}
           </div>
 
