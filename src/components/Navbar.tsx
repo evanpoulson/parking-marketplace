@@ -53,23 +53,23 @@ export default function Navbar() {
           </div>
 
           {/* Right - Auth */}
-          <div className="flex-1 flex justify-end">
+          <div className="flex-1 flex justify-end items-center">
             {user ? (
-              <div className="flex items-center space-x-6">
-                <span className="text-gray-700 font-medium">
+              <>
+                <span className="text-gray-700 font-medium mr-6">
                   Hi, {user.user_metadata?.name || 'there'}
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors font-medium"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium"
                 >
                   Log Out
                 </button>
-              </div>
+              </>
             ) : (
               <Link
                 href="/auth"
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors font-medium"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium"
               >
                 Log In
               </Link>
@@ -80,33 +80,31 @@ export default function Navbar() {
 
         {/* Bottom Row - Navigation Links (only when logged in) */}
         {user && (
-          <div className="flex justify-center py-3 border-t border-gray-100">
-            <div className="flex space-x-12">
-              <Link
-                href="/"
-                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-              >
-                Browse
-              </Link>
-              <Link
-                href="/list-spot"
-                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-              >
-                List a Spot
-              </Link>
-              <Link
-                href="/my-spots"
-                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-              >
-                My Spots
-              </Link>
-              <Link
-                href="/my-bookings"
-                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-              >
-                My Bookings
-              </Link>
-            </div>
+          <div className="flex justify-center items-center py-3 border-t border-gray-100">
+            <Link
+              href="/"
+              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              Browse
+            </Link>
+            <Link
+              href="/list-spot"
+              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              List a Spot
+            </Link>
+            <Link
+              href="/my-spots"
+              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              My Spots
+            </Link>
+            <Link
+              href="/my-bookings"
+              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              My Bookings
+            </Link>
           </div>
         )}
 
