@@ -37,58 +37,26 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-8 py-4">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-8">
 
-          {/* Left Section - Navigation Links */}
-          <div className="flex-[2]">
-            {user ? (
-              <div className="flex gap-6">
-                <Link
-                  href="/"
-                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-                >
-                  Browse
-                </Link>
-                <Link
-                  href="/list-spot"
-                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-                >
-                  List a Spot
-                </Link>
-                <Link
-                  href="/my-spots"
-                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-                >
-                  My Spots
-                </Link>
-                <Link
-                  href="/my-bookings"
-                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
-                >
-                  My Bookings
-                </Link>
-              </div>
-            ) : (
-              <div />
-            )}
-          </div>
+        {/* Top Row */}
+        <div className="flex items-center justify-between py-4">
 
-          {/* Center Section - Logo */}
+          {/* Left - Empty */}
+          <div className="flex-1" />
+
+          {/* Center - Logo */}
           <div className="flex-1 text-center">
-            <Link
-              href="/"
-              className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
-            >
+            <span className="text-2xl font-bold text-gray-900">
               ParkYYC
-            </Link>
+            </span>
           </div>
 
-          {/* Right Section - Auth */}
-          <div className="flex-[1.5] flex justify-end">
+          {/* Right - Auth */}
+          <div className="flex-1 flex justify-end">
             {user ? (
-              <div className="flex items-center gap-4">
-                <span className="text-gray-700 font-medium px-3 py-2">
+              <div className="flex items-center space-x-6">
+                <span className="text-gray-700 font-medium">
                   Hi, {user.user_metadata?.name || 'there'}
                 </span>
                 <button
@@ -109,6 +77,39 @@ export default function Navbar() {
           </div>
 
         </div>
+
+        {/* Bottom Row - Navigation Links (only when logged in) */}
+        {user && (
+          <div className="flex justify-center py-3 border-t border-gray-100">
+            <div className="flex space-x-12">
+              <Link
+                href="/"
+                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
+              >
+                Browse
+              </Link>
+              <Link
+                href="/list-spot"
+                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
+              >
+                List a Spot
+              </Link>
+              <Link
+                href="/my-spots"
+                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
+              >
+                My Spots
+              </Link>
+              <Link
+                href="/my-bookings"
+                className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
+              >
+                My Bookings
+              </Link>
+            </div>
+          </div>
+        )}
+
       </div>
     </nav>
   )
