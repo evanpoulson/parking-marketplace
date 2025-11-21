@@ -43,7 +43,7 @@ export default function Navbar() {
           {/* Left Section - Navigation Links */}
           <div className="flex-1">
             {user ? (
-              <div className="flex gap-6">
+              <div className="flex gap-10">
                 <Link
                   href="/"
                   className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
