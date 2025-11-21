@@ -79,7 +79,7 @@ export default function SpotDetailPage({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 pt-16">
         <p className="text-lg text-gray-600">Loading...</p>
       </div>
     )
@@ -87,7 +87,7 @@ export default function SpotDetailPage({
 
   if (error || !spot) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-16">
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">{error || 'Spot not found'}</p>
         </div>
@@ -96,7 +96,7 @@ export default function SpotDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12 pt-24">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="overflow-hidden bg-white shadow sm:rounded-lg">
           <div className="px-6 py-8">
