@@ -5,8 +5,22 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
+interface Spot {
+  id: string
+  address: string
+  neighborhood: string
+  description: string
+  price_per_day: number
+  owner: {
+    name: string
+  }
+}
+
 export default function HomePage() {
   const [user, setUser] = useState<User | null>(null)
+  const [spots, setSpots] = useState<Spot[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const supabase = createClient()
 
   useEffect(() => {
@@ -28,6 +42,34 @@ export default function HomePage() {
       subscription.unsubscribe()
     }
   }, [supabase.auth])
+
+  // Fetch spots
+  useEffect(() => {
+    const fetchSpots = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/spots')
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch spots')
+        }
+
+        const data = await response.json()
+        setSpots(data.spots || [])
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load parking spots')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSpots()
+  }, [])
+
+  const truncateDescription = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text
+    return text.slice(0, maxLength) + '...'
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -62,14 +104,67 @@ export default function HomePage() {
 
       {/* Available Spots Section */}
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="text-center">
+        <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Available Parking Spots
           </h2>
-          <p className="mt-8 text-lg text-gray-600">
-            Spots will appear here soon
-          </p>
         </div>
+
+        {/* Loading State */}
+        {loading && (
+          <p className="text-center text-lg text-gray-600">Loading spots...</p>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="rounded-md bg-red-50 p-4">
+            <p className="text-center text-sm text-red-800">{error}</p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && spots.length === 0 && (
+          <p className="text-center text-lg text-gray-600">
+            No parking spots available yet
+          </p>
+        )}
+
+        {/* Spots Grid */}
+        {!loading && !error && spots.length > 0 && (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {spots.map((spot) => (
+              <Link
+                key={spot.id}
+                href={`/spots/${spot.id}`}
+                className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-lg"
+              >
+                {/* Neighborhood Badge */}
+                <div className="mb-3">
+                  <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                    {spot.neighborhood}
+                  </span>
+                </div>
+
+                {/* Address */}
+                <h3 className="mb-2 text-lg font-bold text-gray-900">
+                  {spot.address}
+                </h3>
+
+                {/* Price */}
+                <p className="mb-3 text-2xl font-bold text-blue-600">
+                  ${spot.price_per_day}/day
+                </p>
+
+                {/* Description */}
+                {spot.description && (
+                  <p className="text-sm text-gray-600">
+                    {truncateDescription(spot.description, 100)}
+                  </p>
+                )}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
