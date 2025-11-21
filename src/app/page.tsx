@@ -11,6 +11,7 @@ interface Spot {
   neighborhood: string
   description: string
   price_per_day: number
+  owner_id: string
   owner: {
     name: string
   }
@@ -55,7 +56,14 @@ export default function HomePage() {
         }
 
         const data = await response.json()
-        setSpots(data.spots || [])
+        const allSpots = data.spots || []
+
+        // Filter out the current user's own spots
+        const filteredSpots = user
+          ? allSpots.filter((spot: Spot) => spot.owner_id !== user.id)
+          : allSpots
+
+        setSpots(filteredSpots)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load parking spots')
       } finally {
@@ -64,7 +72,7 @@ export default function HomePage() {
     }
 
     fetchSpots()
-  }, [])
+  }, [user])
 
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text
