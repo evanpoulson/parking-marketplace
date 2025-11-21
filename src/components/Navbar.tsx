@@ -48,53 +48,53 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-4">
-              {user ? (
-                <>
-                  <Link
-                    href="/"
-                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700"
-                  >
-                    Browse
-                  </Link>
-                  <Link
-                    href="/list-spot"
-                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700"
-                  >
-                    List a Spot
-                  </Link>
-                  <Link
-                    href="/my-spots"
-                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700"
-                  >
-                    My Spots
-                  </Link>
-                  <Link
-                    href="/my-bookings"
-                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700"
-                  >
-                    My Bookings
-                  </Link>
-                  <span className="px-3 py-2 text-sm">
+          <div className="hidden md:flex md:items-center md:space-x-2">
+            {user ? (
+              <>
+                <Link
+                  href="/"
+                  className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+                >
+                  Browse
+                </Link>
+                <Link
+                  href="/list-spot"
+                  className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+                >
+                  List a Spot
+                </Link>
+                <Link
+                  href="/my-spots"
+                  className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+                >
+                  My Spots
+                </Link>
+                <Link
+                  href="/my-bookings"
+                  className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+                >
+                  My Bookings
+                </Link>
+                <div className="ml-4 flex items-center space-x-3 border-l border-blue-500 pl-4">
+                  <span className="text-sm font-medium">
                     Hi, {user.user_metadata?.name || 'there'}
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium hover:bg-blue-800"
+                    className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium transition-colors hover:bg-blue-800"
                   >
                     Log Out
                   </button>
-                </>
-              ) : (
-                <Link
-                  href="/auth"
-                  className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium hover:bg-blue-800"
-                >
-                  Log In
-                </Link>
-              )}
-            </div>
+                </div>
+              </>
+            ) : (
+              <Link
+                href="/auth"
+                className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium transition-colors hover:bg-blue-800"
+              >
+                Log In
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}

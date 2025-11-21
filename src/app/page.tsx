@@ -102,70 +102,72 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Available Spots Section */}
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Available Parking Spots
-          </h2>
-        </div>
-
-        {/* Loading State */}
-        {loading && (
-          <p className="text-center text-lg text-gray-600">Loading spots...</p>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-center text-sm text-red-800">{error}</p>
+      {/* Available Spots Section - Only show when user is logged in */}
+      {user && (
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Available Parking Spots
+            </h2>
           </div>
-        )}
 
-        {/* Empty State */}
-        {!loading && !error && spots.length === 0 && (
-          <p className="text-center text-lg text-gray-600">
-            No parking spots available yet
-          </p>
-        )}
+          {/* Loading State */}
+          {loading && (
+            <p className="text-center text-lg text-gray-600">Loading spots...</p>
+          )}
 
-        {/* Spots Grid */}
-        {!loading && !error && spots.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {spots.map((spot) => (
-              <Link
-                key={spot.id}
-                href={`/spots/${spot.id}`}
-                className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-lg"
-              >
-                {/* Neighborhood Badge */}
-                <div className="mb-3">
-                  <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
-                    {spot.neighborhood}
-                  </span>
-                </div>
+          {/* Error State */}
+          {error && (
+            <div className="rounded-md bg-red-50 p-4">
+              <p className="text-center text-sm text-red-800">{error}</p>
+            </div>
+          )}
 
-                {/* Address */}
-                <h3 className="mb-2 text-lg font-bold text-gray-900">
-                  {spot.address}
-                </h3>
+          {/* Empty State */}
+          {!loading && !error && spots.length === 0 && (
+            <p className="text-center text-lg text-gray-600">
+              No parking spots available yet
+            </p>
+          )}
 
-                {/* Price */}
-                <p className="mb-3 text-2xl font-bold text-blue-600">
-                  ${spot.price_per_day}/day
-                </p>
+          {/* Spots Grid */}
+          {!loading && !error && spots.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {spots.map((spot) => (
+                <Link
+                  key={spot.id}
+                  href={`/spots/${spot.id}`}
+                  className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-lg"
+                >
+                  {/* Neighborhood Badge */}
+                  <div className="mb-3">
+                    <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                      {spot.neighborhood}
+                    </span>
+                  </div>
 
-                {/* Description */}
-                {spot.description && (
-                  <p className="text-sm text-gray-600">
-                    {truncateDescription(spot.description, 100)}
+                  {/* Address */}
+                  <h3 className="mb-2 text-lg font-bold text-gray-900">
+                    {spot.address}
+                  </h3>
+
+                  {/* Price */}
+                  <p className="mb-3 text-2xl font-bold text-blue-600">
+                    ${spot.price_per_day}/day
                   </p>
-                )}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+
+                  {/* Description */}
+                  {spot.description && (
+                    <p className="text-sm text-gray-600">
+                      {truncateDescription(spot.description, 100)}
+                    </p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
