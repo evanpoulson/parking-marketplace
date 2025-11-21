@@ -78,7 +78,7 @@ export default function ListSpotPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 pt-24">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
         <div className="bg-white px-6 py-8 shadow sm:rounded-lg">
           <h1 className="mb-8 text-3xl font-bold text-gray-900">

@@ -36,77 +36,78 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Left Side - Navigation Links (only when logged in) */}
-          <div className="flex items-center space-x-1">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-8 py-4">
+        <div className="flex items-center justify-between">
+
+          {/* Left Section - Navigation Links */}
+          <div className="flex-1">
             {user ? (
-              <>
+              <div className="flex gap-6">
                 <Link
                   href="/"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
                 >
                   Browse
                 </Link>
-                <span className="text-gray-300">|</span>
                 <Link
                   href="/list-spot"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
                 >
                   List a Spot
                 </Link>
-                <span className="text-gray-300">|</span>
                 <Link
                   href="/my-spots"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
                 >
                   My Spots
                 </Link>
-                <span className="text-gray-300">|</span>
                 <Link
                   href="/my-bookings"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
                 >
                   My Bookings
                 </Link>
-              </>
+              </div>
             ) : (
-              // Spacer for alignment when logged out
-              <div className="w-12" />
+              <div />
             )}
           </div>
 
-          {/* Center - ParkYYC Logo */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <Link href="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700">
+          {/* Center Section - Logo */}
+          <div className="flex-1 text-center">
+            <Link
+              href="/"
+              className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+            >
               ParkYYC
             </Link>
           </div>
 
-          {/* Right Side - User Info / Auth */}
-          <div className="flex items-center space-x-3">
+          {/* Right Section - Auth */}
+          <div className="flex-1 flex justify-end">
             {user ? (
-              <>
-                <span className="text-sm font-medium text-gray-700">
+              <div className="flex items-center gap-4">
+                <span className="text-gray-700 font-medium">
                   Hi, {user.user_metadata?.name || 'there'}
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors font-medium"
                 >
                   Log Out
                 </button>
-              </>
+              </div>
             ) : (
               <Link
                 href="/auth"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors font-medium"
               >
                 Log In
               </Link>
             )}
           </div>
+
         </div>
       </div>
     </nav>
