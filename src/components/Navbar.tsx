@@ -41,7 +41,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
 
           {/* Left Section - Navigation Links */}
-          <div className="flex-1">
+          <div className="flex-[2]">
             {user ? (
               <div className="flex gap-6">
                 <Link
@@ -85,7 +85,7 @@ export default function Navbar() {
           </div>
 
           {/* Right Section - Auth */}
-          <div className="flex-1 flex justify-end">
+          <div className="flex-[1.5] flex justify-end">
             {user ? (
               <div className="flex items-center gap-4">
                 <span className="text-gray-700 font-medium px-3 py-2">
