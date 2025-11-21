@@ -19,15 +19,22 @@ interface Spot {
 
 export default function HomePage() {
   const [user, setUser] = useState<User | null>(null)
+  const [userLoading, setUserLoading] = useState(true)
   const [spots, setSpots] = useState<Spot[]>([])
-  const [loading, setLoading] = useState(true)
+  const [spotsLoading, setSpotsLoading] = useState(true)
   const [error, setError] = useState('')
   const supabase = createClient()
 
+  // Fetch user
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
+      try {
+        setUserLoading(true)
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+      } finally {
+        setUserLoading(false)
+      }
     }
 
     getUser()
@@ -44,11 +51,14 @@ export default function HomePage() {
     }
   }, [supabase.auth])
 
-  // Fetch spots
+  // Fetch spots - only when user data is ready
   useEffect(() => {
+    // Don't fetch spots until we know if user is logged in
+    if (userLoading) return
+
     const fetchSpots = async () => {
       try {
-        setLoading(true)
+        setSpotsLoading(true)
         const response = await fetch('/api/spots')
 
         if (!response.ok) {
@@ -67,12 +77,12 @@ export default function HomePage() {
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load parking spots')
       } finally {
-        setLoading(false)
+        setSpotsLoading(false)
       }
     }
 
     fetchSpots()
-  }, [user])
+  }, [user, userLoading])
 
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text
@@ -120,26 +130,26 @@ export default function HomePage() {
           </div>
 
           {/* Loading State */}
-          {loading && (
+          {(userLoading || spotsLoading) && (
             <p className="text-center text-lg text-gray-600">Loading spots...</p>
           )}
 
           {/* Error State */}
-          {error && (
+          {!userLoading && !spotsLoading && error && (
             <div className="rounded-md bg-red-50 p-4">
               <p className="text-center text-sm text-red-800">{error}</p>
             </div>
           )}
 
           {/* Empty State */}
-          {!loading && !error && spots.length === 0 && (
+          {!userLoading && !spotsLoading && !error && spots.length === 0 && (
             <p className="text-center text-lg text-gray-600">
               No parking spots available yet
             </p>
           )}
 
           {/* Spots Grid */}
-          {!loading && !error && spots.length > 0 && (
+          {!userLoading && !spotsLoading && !error && spots.length > 0 && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {spots.map((spot) => (
                 <Link
