@@ -43,28 +43,28 @@ export default function Navbar() {
           {/* Left Section - Navigation Links */}
           <div className="flex-1">
             {user ? (
-              <div className="flex gap-10">
+              <div className="flex gap-2">
                 <Link
                   href="/"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
                 >
                   Browse
                 </Link>
                 <Link
                   href="/list-spot"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
                 >
                   List a Spot
                 </Link>
                 <Link
                   href="/my-spots"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
                 >
                   My Spots
                 </Link>
                 <Link
                   href="/my-bookings"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium rounded hover:bg-gray-50 transition-colors"
                 >
                   My Bookings
                 </Link>
@@ -88,7 +88,7 @@ export default function Navbar() {
           <div className="flex-1 flex justify-end">
             {user ? (
               <div className="flex items-center gap-4">
-                <span className="text-gray-700 font-medium">
+                <span className="text-gray-700 font-medium px-3 py-2">
                   Hi, {user.user_metadata?.name || 'there'}
                 </span>
                 <button
