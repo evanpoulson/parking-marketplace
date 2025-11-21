@@ -81,7 +81,7 @@ export default function HomePage() {
               Find Your Perfect Parking Spot in Calgary
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-xl text-blue-100">
-              Connect with local property owners
+              Connect with local parking spot owners
             </p>
 
             <div className="mt-10">
