@@ -85,10 +85,12 @@ export async function POST(request: Request) {
     }
 
     // Update spot availability
-    const { error: updateError } = await supabase
+    console.log(`Attempting to update spot ${spotId} to is_available = false...`)
+    const { error: updateError, data: updateData } = await supabase
       .from('spots')
       .update({ is_available: false })
       .eq('id', spotId)
+      .select()
 
     if (updateError) {
       console.error('Spot update error:', updateError)
@@ -99,7 +101,7 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log(`Successfully updated spot ${spotId} to is_available = false`)
+    console.log(`Successfully updated spot ${spotId} to is_available = false. Updated data:`, updateData)
 
     return NextResponse.json({
       success: true,
