@@ -29,6 +29,9 @@ export default function SpotDetailPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showDialog, setShowDialog] = useState(false)
+  const [bookingLoading, setBookingLoading] = useState(false)
+  const [bookingError, setBookingError] = useState('')
+  const [bookingSuccess, setBookingSuccess] = useState(false)
 
   const router = useRouter()
   const supabase = createClient()
@@ -67,10 +70,40 @@ export default function SpotDetailPage({
     }
   }
 
-  const handleConfirmBooking = () => {
-    // TODO: Implement actual booking logic
-    setShowDialog(false)
-    // For now, just close the dialog
+  const handleConfirmBooking = async () => {
+    if (!spot) return
+
+    setBookingLoading(true)
+    setBookingError('')
+
+    try {
+      const response = await fetch('/api/bookings/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          spotId: spot.id,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create booking')
+      }
+
+      // Success!
+      setBookingSuccess(true)
+
+      // Redirect to My Bookings after 1 second
+      setTimeout(() => {
+        router.push('/my-bookings')
+      }, 1000)
+    } catch (err) {
+      setBookingError(err instanceof Error ? err.message : 'Failed to create booking')
+      setBookingLoading(false)
+    }
   }
 
   const handleCancelBooking = () => {
@@ -155,23 +188,43 @@ export default function SpotDetailPage({
             <h3 className="mb-4 text-xl font-bold text-gray-900">
               Confirm Booking
             </h3>
-            <p className="mb-6 text-gray-700">
-              Book this spot for ${spot.price_per_day}/day?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleConfirmBooking}
-                className="flex-1 rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                Confirm Booking
-              </button>
-              <button
-                onClick={handleCancelBooking}
-                className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              >
-                Cancel
-              </button>
-            </div>
+
+            {bookingSuccess ? (
+              <div className="mb-6 rounded-md bg-green-50 p-4">
+                <p className="text-sm font-medium text-green-800">
+                  Booking confirmed! Redirecting...
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="mb-6 text-gray-700">
+                  Book this spot for ${spot.price_per_day}/day?
+                </p>
+
+                {bookingError && (
+                  <div className="mb-4 rounded-md bg-red-50 p-4">
+                    <p className="text-sm text-red-800">{bookingError}</p>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleConfirmBooking}
+                    disabled={bookingLoading}
+                    className="flex-1 rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
+                  >
+                    {bookingLoading ? 'Booking...' : 'Confirm Booking'}
+                  </button>
+                  <button
+                    onClick={handleCancelBooking}
+                    disabled={bookingLoading}
+                    className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
