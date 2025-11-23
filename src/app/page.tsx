@@ -59,7 +59,9 @@ export default function HomePage() {
     const fetchSpots = async () => {
       try {
         setSpotsLoading(true)
-        const response = await fetch('/api/spots')
+        const response = await fetch('/api/spots', {
+          cache: 'no-store',
+        })
 
         if (!response.ok) {
           throw new Error('Failed to fetch spots')

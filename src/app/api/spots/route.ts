@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+export const dynamic = 'force-dynamic' // Ensure route is never cached
+
 export async function GET() {
   try {
     // Create Supabase client

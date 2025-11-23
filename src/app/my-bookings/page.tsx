@@ -11,6 +11,7 @@ interface Booking {
     id: string
     address: string
     neighborhood: string
+    description: string
     price_per_day: number
   }
 }
@@ -49,6 +50,12 @@ export default function MyBookingsPage() {
       month: 'long',
       day: 'numeric',
     })
+  }
+
+  const truncateDescription = (text: string, maxLength: number) => {
+    if (!text) return ''
+    if (text.length <= maxLength) return text
+    return text.slice(0, maxLength) + '...'
   }
 
   return (
@@ -117,6 +124,13 @@ export default function MyBookingsPage() {
                 <p className="mb-3 text-2xl font-bold text-blue-600">
                   ${booking.spot.price_per_day}/day
                 </p>
+
+                {/* Description */}
+                {booking.spot.description && (
+                  <p className="mb-3 text-sm text-gray-600">
+                    {truncateDescription(booking.spot.description, 150)}
+                  </p>
+                )}
 
                 {/* Booking Date */}
                 <p className="text-sm text-gray-600">

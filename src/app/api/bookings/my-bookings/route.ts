@@ -27,6 +27,7 @@ export async function GET() {
           id,
           address,
           neighborhood,
+          description,
           price_per_day
         )
       `)
