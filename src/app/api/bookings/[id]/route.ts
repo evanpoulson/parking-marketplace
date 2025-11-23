@@ -8,6 +8,7 @@ export async function DELETE(
   try {
     // Unwrap params
     const { id } = await params
+    console.log('DELETE booking request received for booking ID:', id)
 
     // Create Supabase client
     const supabase = await createClient()
@@ -16,11 +17,14 @@ export async function DELETE(
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
+      console.error('Auth error:', authError)
       return NextResponse.json(
         { error: 'Unauthorized - please log in to cancel a booking' },
         { status: 401 }
       )
     }
+
+    console.log('User authenticated:', user.id)
 
     // Get the booking to verify ownership and get spot_id
     const { data: booking, error: fetchError } = await supabase
@@ -29,20 +33,30 @@ export async function DELETE(
       .eq('id', id)
       .single()
 
-    if (fetchError || !booking) {
+    if (fetchError) {
+      console.error('Fetch booking error:', fetchError)
+    }
+
+    if (!booking) {
+      console.error('Booking not found for ID:', id)
       return NextResponse.json(
         { error: 'Booking not found' },
         { status: 404 }
       )
     }
 
+    console.log('Booking found:', booking)
+
     // Verify the booking belongs to the current user
     if (booking.renter_id !== user.id) {
+      console.error('Ownership mismatch. Booking renter_id:', booking.renter_id, 'User id:', user.id)
       return NextResponse.json(
         { error: 'You can only cancel your own bookings' },
         { status: 403 }
       )
     }
+
+    console.log('Ownership verified. Attempting to delete booking...')
 
     // Delete the booking
     const { error: deleteError } = await supabase
@@ -57,6 +71,8 @@ export async function DELETE(
         { status: 500 }
       )
     }
+
+    console.log('Booking deleted successfully. Updating spot availability...')
 
     // Update the spot to make it available again
     const { error: updateError } = await supabase
