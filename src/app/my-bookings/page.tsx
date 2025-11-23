@@ -20,6 +20,11 @@ export default function MyBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const [bookingToCancel, setBookingToCancel] = useState<string | null>(null)
+  const [cancelLoading, setCancelLoading] = useState(false)
+  const [cancelError, setCancelError] = useState('')
+  const [cancelSuccess, setCancelSuccess] = useState(false)
 
   useEffect(() => {
     const fetchMyBookings = async () => {
@@ -56,6 +61,55 @@ export default function MyBookingsPage() {
     if (!text) return ''
     if (text.length <= maxLength) return text
     return text.slice(0, maxLength) + '...'
+  }
+
+  const handleCancelClick = (bookingId: string) => {
+    setBookingToCancel(bookingId)
+    setShowCancelDialog(true)
+    setCancelError('')
+  }
+
+  const handleConfirmCancel = async () => {
+    if (!bookingToCancel) return
+
+    setCancelLoading(true)
+    setCancelError('')
+
+    try {
+      const response = await fetch(`/api/bookings/${bookingToCancel}`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to cancel booking')
+      }
+
+      // Success!
+      setCancelSuccess(true)
+
+      // Remove the cancelled booking from the list
+      setBookings(bookings.filter(b => b.id !== bookingToCancel))
+
+      // Close dialog after a brief delay
+      setTimeout(() => {
+        setShowCancelDialog(false)
+        setCancelSuccess(false)
+        setBookingToCancel(null)
+      }, 1500)
+    } catch (err) {
+      setCancelError(err instanceof Error ? err.message : 'Failed to cancel booking')
+      setCancelLoading(false)
+    }
+  }
+
+  const handleCloseCancelDialog = () => {
+    if (!cancelLoading) {
+      setShowCancelDialog(false)
+      setCancelError('')
+      setBookingToCancel(null)
+    }
   }
 
   return (
@@ -133,14 +187,70 @@ export default function MyBookingsPage() {
                 )}
 
                 {/* Booking Date */}
-                <p className="text-sm text-gray-600">
+                <p className="mb-4 text-sm text-gray-600">
                   Booked on {formatDate(booking.created_at)}
                 </p>
+
+                {/* Cancel Booking Button */}
+                <button
+                  onClick={() => handleCancelClick(booking.id)}
+                  className="w-full rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  Cancel Booking
+                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Cancellation Confirmation Dialog */}
+      {showCancelDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="mb-4 text-xl font-bold text-gray-900">
+              Cancel Booking
+            </h3>
+
+            {cancelSuccess ? (
+              <div className="mb-6 rounded-md bg-green-50 p-4">
+                <p className="text-sm font-medium text-green-800">
+                  Booking cancelled successfully!
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="mb-6 text-gray-700">
+                  Are you sure you want to cancel this booking?
+                </p>
+
+                {cancelError && (
+                  <div className="mb-4 rounded-md bg-red-50 p-4">
+                    <p className="text-sm text-red-800">{cancelError}</p>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleConfirmCancel}
+                    disabled={cancelLoading}
+                    className="flex-1 rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-red-400 disabled:cursor-not-allowed"
+                  >
+                    {cancelLoading ? 'Cancelling...' : 'Confirm'}
+                  </button>
+                  <button
+                    onClick={handleCloseCancelDialog}
+                    disabled={cancelLoading}
+                    className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
