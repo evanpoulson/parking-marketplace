@@ -72,31 +72,21 @@ export default function MyBookingsPage() {
   const handleConfirmCancel = async () => {
     if (!bookingToCancel) return
 
-    console.log('Cancelling booking with ID:', bookingToCancel)
     setCancelLoading(true)
     setCancelError('')
 
     try {
-      const url = `/api/bookings/${bookingToCancel}`
-      console.log('Making DELETE request to:', url)
-
-      const response = await fetch(url, {
+      const response = await fetch(`/api/bookings/${bookingToCancel}`, {
         method: 'DELETE',
       })
 
-      console.log('Response status:', response.status)
-      console.log('Response ok:', response.ok)
-
       const data = await response.json()
-      console.log('Response data:', data)
 
       if (!response.ok) {
-        console.error('Delete failed with error:', data.error)
         throw new Error(data.error || 'Failed to cancel booking')
       }
 
       // Success!
-      console.log('Booking cancelled successfully!')
       setCancelSuccess(true)
 
       // Remove the cancelled booking from the list
@@ -109,7 +99,6 @@ export default function MyBookingsPage() {
         setBookingToCancel(null)
       }, 1500)
     } catch (err) {
-      console.error('Error cancelling booking:', err)
       setCancelError(err instanceof Error ? err.message : 'Failed to cancel booking')
       setCancelLoading(false)
     }

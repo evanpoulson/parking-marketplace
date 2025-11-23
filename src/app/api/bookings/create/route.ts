@@ -85,23 +85,18 @@ export async function POST(request: Request) {
     }
 
     // Update spot availability
-    console.log(`Attempting to update spot ${spotId} to is_available = false...`)
-    const { error: updateError, data: updateData } = await supabase
+    const { error: updateError } = await supabase
       .from('spots')
       .update({ is_available: false })
       .eq('id', spotId)
-      .select()
 
     if (updateError) {
       console.error('Spot update error:', updateError)
-      // Note: Booking was created but spot wasn't updated - this is a partial failure
       return NextResponse.json(
         { error: 'Booking created but failed to update spot availability' },
         { status: 500 }
       )
     }
-
-    console.log(`Successfully updated spot ${spotId} to is_available = false. Updated data:`, updateData)
 
     return NextResponse.json({
       success: true,
