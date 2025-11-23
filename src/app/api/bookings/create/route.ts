@@ -99,6 +99,8 @@ export async function POST(request: Request) {
       )
     }
 
+    console.log(`Successfully updated spot ${spotId} to is_available = false`)
+
     return NextResponse.json({
       success: true,
       bookingId: booking.id,
