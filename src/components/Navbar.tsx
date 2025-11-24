@@ -36,7 +36,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white border-b-2 border-yellow-400 shadow-md">
       <div className="max-w-7xl mx-auto px-8">
 
         {/* Top Row */}
@@ -47,9 +47,11 @@ export default function Navbar() {
 
           {/* Center - Logo */}
           <div className="flex-1 text-center">
-            <span className="text-2xl font-bold text-gray-900">
-              ParkYYC
-            </span>
+            <Link href="/" className="inline-block">
+              <span className="text-3xl font-bold tracking-tighter text-blue-800 transition-colors hover:text-blue-900">
+                Park<span className="text-yellow-500">YYC</span>
+              </span>
+            </Link>
           </div>
 
           {/* Right - Auth */}
@@ -57,11 +59,11 @@ export default function Navbar() {
             {user ? (
               <>
                 <span className="text-gray-700 font-medium mr-6">
-                  Hi, {user.user_metadata?.name || 'there'}
+                  Hi, <span className="font-bold text-blue-800">{user.user_metadata?.name || 'there'}</span>
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium"
+                  className="rounded-lg bg-blue-800 px-5 py-2.5 font-semibold text-white transition-all hover:bg-blue-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Log Out
                 </button>
@@ -69,7 +71,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/auth"
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium"
+                className="rounded-lg bg-blue-800 px-5 py-2.5 font-semibold text-white transition-all hover:bg-blue-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Log In
               </Link>
@@ -83,27 +85,31 @@ export default function Navbar() {
           <div className="flex justify-center items-center py-3 border-t border-gray-100">
             <Link
               href="/"
-              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+              className="group relative mx-6 py-1 text-gray-700 font-semibold transition-colors hover:text-blue-800"
             >
               Browse
+              <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               href="/list-spot"
-              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+              className="group relative mx-6 py-1 text-gray-700 font-semibold transition-colors hover:text-blue-800"
             >
               List a Spot
+              <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               href="/my-spots"
-              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+              className="group relative mx-6 py-1 text-gray-700 font-semibold transition-colors hover:text-blue-800"
             >
               My Spots
+              <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               href="/my-bookings"
-              className="mx-6 text-gray-700 hover:text-blue-600 font-medium"
+              className="group relative mx-6 py-1 text-gray-700 font-semibold transition-colors hover:text-blue-800"
             >
               My Bookings
+              <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </div>
         )}

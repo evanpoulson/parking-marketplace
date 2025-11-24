@@ -92,27 +92,30 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-blue-600 to-blue-700 py-20 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="hero-grid relative overflow-hidden bg-gradient-to-br from-blue-800 via-blue-700 to-blue-900 py-24 text-white">
+        {/* Diagonal accent stripe */}
+        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-yellow-400/10 to-transparent"></div>
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Find Your Perfect Parking Spot in Calgary
+            <h1 className="animate-fade-in text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
+              Find Your Perfect<br />Parking Spot in Calgary
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-xl text-blue-100">
-              Connect with local parking spot owners
+            <p className="animate-fade-in-delay mx-auto mt-6 max-w-2xl text-xl text-blue-100">
+              Connect with local parking spot owners. Simple. Fast. Reliable.
             </p>
 
             <div className="mt-10">
               {user ? (
-                <p className="text-2xl font-medium">
+                <p className="animate-fade-in-delay text-2xl font-medium">
                   Welcome back, {user.user_metadata?.name || 'there'}!
                 </p>
               ) : (
                 <Link
                   href="/auth"
-                  className="inline-block rounded-md bg-white px-8 py-3 text-lg font-medium text-blue-600 shadow-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+                  className="animate-float inline-block rounded-lg bg-yellow-400 px-8 py-4 text-lg font-bold text-gray-900 shadow-lg transition-all hover:bg-yellow-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-blue-700"
                 >
                   Get Started
                 </Link>
@@ -126,62 +129,82 @@ export default function HomePage() {
       {user && (
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
               Available Parking Spots
             </h2>
+            <div className="mx-auto mt-2 h-1 w-24 bg-yellow-400"></div>
           </div>
 
           {/* Loading State */}
           {(userLoading || spotsLoading) && (
-            <p className="text-center text-lg text-gray-600">Loading spots...</p>
+            <div className="text-center">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+              <p className="mt-4 text-lg text-gray-600">Loading spots...</p>
+            </div>
           )}
 
           {/* Error State */}
           {!userLoading && !spotsLoading && error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-center text-sm text-red-800">{error}</p>
+            <div className="animate-slide-in rounded-lg border-l-4 border-red-500 bg-red-50 p-4">
+              <p className="text-center text-sm font-medium text-red-800">{error}</p>
             </div>
           )}
 
           {/* Empty State */}
           {!userLoading && !spotsLoading && !error && spots.length === 0 && (
-            <p className="text-center text-lg text-gray-600">
-              No parking spots available yet
-            </p>
+            <div className="text-center">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-3xl">🅿️</span>
+              </div>
+              <p className="text-lg text-gray-600">
+                No parking spots available yet
+              </p>
+            </div>
           )}
 
           {/* Spots Grid */}
           {!userLoading && !spotsLoading && !error && spots.length > 0 && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {spots.map((spot) => (
+              {spots.map((spot, index) => (
                 <Link
                   key={spot.id}
                   href={`/spots/${spot.id}`}
-                  className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-lg"
+                  className="card-lift border-accent-hover group cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-md"
+                  style={{
+                    animation: `scaleIn 0.4s ease-out ${index * 0.1}s forwards`,
+                    opacity: 0
+                  }}
                 >
                   {/* Neighborhood Badge */}
-                  <div className="mb-3">
-                    <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="inline-block rounded-md bg-blue-800 px-3 py-1.5 text-sm font-bold uppercase tracking-wide text-white">
                       {spot.neighborhood}
                     </span>
+                    <span className="text-2xl">🅿️</span>
                   </div>
 
                   {/* Address */}
-                  <h3 className="mb-2 text-lg font-bold text-gray-900">
+                  <h3 className="mb-3 text-xl font-bold text-gray-900 group-hover:text-blue-800 transition-colors">
                     {spot.address}
                   </h3>
 
                   {/* Price */}
-                  <p className="mb-3 text-2xl font-bold text-blue-600">
-                    ${spot.price_per_day}/day
+                  <p className="mb-4 font-mono text-3xl font-bold text-yellow-500">
+                    ${spot.price_per_day}<span className="text-lg text-gray-600">/day</span>
                   </p>
 
                   {/* Description */}
                   {spot.description && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm leading-relaxed text-gray-600">
                       {truncateDescription(spot.description, 100)}
                     </p>
                   )}
+
+                  {/* Hover indicator */}
+                  <div className="mt-4 flex items-center text-sm font-semibold text-blue-800 opacity-0 transition-opacity group-hover:opacity-100">
+                    <span>View Details</span>
+                    <span className="ml-1">→</span>
+                  </div>
                 </Link>
               ))}
             </div>
