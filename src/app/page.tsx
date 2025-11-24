@@ -94,28 +94,32 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="hero-grid relative overflow-hidden bg-gradient-to-br from-blue-800 via-blue-700 to-blue-900 py-24 text-white">
+      <div className="hero-grid-light relative overflow-hidden bg-white border-b-4 border-yellow-400 py-24">
         {/* Diagonal accent stripe */}
-        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-yellow-400/10 to-transparent"></div>
+        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-yellow-400/5 to-transparent"></div>
+
+        {/* Parking sign accent */}
+        <div className="absolute left-8 top-8 text-6xl opacity-10">🅿️</div>
+        <div className="absolute right-16 bottom-12 text-6xl opacity-10">🅿️</div>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="animate-fade-in text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
+            <h1 className="animate-fade-in text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
               Find Your Perfect<br />Parking Spot in Calgary
             </h1>
-            <p className="animate-fade-in-delay mx-auto mt-6 max-w-2xl text-xl text-blue-100">
+            <p className="animate-fade-in-delay mx-auto mt-6 max-w-2xl text-xl text-gray-700">
               Connect with local parking spot owners. Simple. Fast. Reliable.
             </p>
 
             <div className="mt-10">
               {user ? (
-                <p className="animate-fade-in-delay text-2xl font-medium">
-                  Welcome back, {user.user_metadata?.name || 'there'}!
+                <p className="animate-fade-in-delay text-2xl font-bold text-gray-900">
+                  Welcome back, <span className="text-blue-800">{user.user_metadata?.name || 'there'}</span>!
                 </p>
               ) : (
                 <Link
                   href="/auth"
-                  className="animate-float inline-block rounded-lg bg-yellow-400 px-8 py-4 text-lg font-bold text-gray-900 shadow-lg transition-all hover:bg-yellow-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-blue-700"
+                  className="animate-float inline-block rounded-lg bg-yellow-400 px-8 py-4 text-lg font-bold text-gray-900 shadow-lg transition-all hover:bg-yellow-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
                 >
                   Get Started
                 </Link>
@@ -135,30 +139,51 @@ export default function HomePage() {
             <div className="mx-auto mt-2 h-1 w-24 bg-yellow-400"></div>
           </div>
 
-          {/* Loading State */}
+          {/* Loading State - Skeleton Loaders */}
           {(userLoading || spotsLoading) && (
-            <div className="text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-              <p className="mt-4 text-lg text-gray-600">Loading spots...</p>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="h-8 w-32 rounded-md bg-gray-200"></div>
+                    <div className="h-8 w-8 rounded-full bg-gray-200"></div>
+                  </div>
+                  <div className="mb-3 h-6 w-3/4 rounded bg-gray-200"></div>
+                  <div className="mb-4 h-10 w-32 rounded bg-gray-200"></div>
+                  <div className="space-y-2">
+                    <div className="h-4 w-full rounded bg-gray-200"></div>
+                    <div className="h-4 w-5/6 rounded bg-gray-200"></div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
           {/* Error State */}
           {!userLoading && !spotsLoading && error && (
-            <div className="animate-slide-in rounded-lg border-l-4 border-red-500 bg-red-50 p-4">
-              <p className="text-center text-sm font-medium text-red-800">{error}</p>
+            <div className="animate-slide-in rounded-lg border-l-4 border-red-500 bg-red-50 p-6">
+              <p className="text-center font-medium text-red-800">{error}</p>
             </div>
           )}
 
           {/* Empty State */}
           {!userLoading && !spotsLoading && !error && spots.length === 0 && (
-            <div className="text-center">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
-                <span className="text-3xl">🅿️</span>
+            <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center">
+              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-yellow-100">
+                <span className="text-5xl">🅿️</span>
               </div>
-              <p className="text-lg text-gray-600">
-                No parking spots available yet
+              <h3 className="mb-2 text-xl font-bold text-gray-900">
+                No Parking Spots Available
+              </h3>
+              <p className="text-gray-600">
+                Be the first to list a spot in your neighborhood!
               </p>
+              <Link
+                href="/list-spot"
+                className="mt-6 inline-block rounded-lg bg-yellow-400 px-6 py-3 font-bold text-gray-900 transition-all hover:bg-yellow-300 hover:shadow-lg"
+              >
+                List Your First Spot
+              </Link>
             </div>
           )}
 
@@ -189,13 +214,13 @@ export default function HomePage() {
                   </h3>
 
                   {/* Price */}
-                  <p className="mb-4 font-mono text-3xl font-bold text-yellow-500">
-                    ${spot.price_per_day}<span className="text-lg text-gray-600">/day</span>
+                  <p className="mb-4 font-mono text-3xl font-bold text-yellow-600">
+                    ${spot.price_per_day}<span className="text-lg text-gray-700">/day</span>
                   </p>
 
                   {/* Description */}
                   {spot.description && (
-                    <p className="text-sm leading-relaxed text-gray-600">
+                    <p className="text-sm leading-relaxed text-gray-700">
                       {truncateDescription(spot.description, 100)}
                     </p>
                   )}
