@@ -115,16 +115,35 @@ export async function DELETE(
     }
 
     // Delete the spot
-    const { error: deleteError } = await supabase
+    console.log('Attempting to delete spot:', { id, owner_id: user.id })
+    const { data: deleteData, error: deleteError } = await supabase
       .from('spots')
       .delete()
       .eq('id', id)
       .eq('owner_id', user.id) // Double-check ownership
+      .select()
+
+    console.log('Delete result:', { data: deleteData, error: deleteError })
 
     if (deleteError) {
       console.error('Spot deletion error:', deleteError)
       return NextResponse.json(
-        { error: 'Failed to delete spot: ' + deleteError.message },
+        {
+          error: 'Failed to delete spot: ' + deleteError.message,
+          details: deleteError,
+          hint: deleteError.hint
+        },
+        { status: 500 }
+      )
+    }
+
+    if (!deleteData || deleteData.length === 0) {
+      console.error('No spot was deleted - possible RLS policy issue')
+      return NextResponse.json(
+        {
+          error: 'Failed to delete spot - no rows affected. This may be a permission issue with Supabase Row Level Security.',
+          hint: 'Check your Supabase RLS policies for the spots table - you need a DELETE policy that allows: (auth.uid() = owner_id)'
+        },
         { status: 500 }
       )
     }
