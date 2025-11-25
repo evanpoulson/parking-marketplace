@@ -78,19 +78,25 @@ export default function ListSpotPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen py-12">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-        <div className="bg-white px-6 py-8 shadow sm:rounded-lg">
-          <h1 className="mb-8 text-3xl font-bold text-gray-900">
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
             List Your Parking Spot
           </h1>
+          <div className="mx-auto mt-2 h-1 w-24 bg-yellow-400"></div>
+          <p className="mt-4 text-gray-700">
+            Start earning by renting out your parking space
+          </p>
+        </div>
 
+        <div className="animate-scale-in rounded-lg border-l-4 border-yellow-400 bg-white px-8 py-10 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Neighborhood */}
             <div>
               <label
                 htmlFor="neighborhood"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-bold text-gray-900"
               >
                 Neighborhood <span className="text-red-500">*</span>
               </label>
@@ -100,7 +106,7 @@ export default function ListSpotPage() {
                 onChange={(e) => setNeighborhood(e.target.value)}
                 disabled={loading || success}
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed sm:text-sm"
+                className="focus-glow mt-2 block w-full appearance-none rounded-lg border-2 border-gray-300 px-4 py-3 transition-all focus:border-yellow-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 <option value="">Select a neighborhood</option>
                 {NEIGHBORHOODS.map((hood) => (
@@ -115,7 +121,7 @@ export default function ListSpotPage() {
             <div>
               <label
                 htmlFor="address"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-bold text-gray-900"
               >
                 Street Address <span className="text-red-500">*</span>
               </label>
@@ -127,7 +133,7 @@ export default function ListSpotPage() {
                 disabled={loading || success}
                 required
                 placeholder="123 Main St SW"
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed sm:text-sm"
+                className="focus-glow mt-2 block w-full appearance-none rounded-lg border-2 border-gray-300 px-4 py-3 placeholder-gray-400 transition-all focus:border-yellow-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -135,7 +141,7 @@ export default function ListSpotPage() {
             <div>
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-bold text-gray-900"
               >
                 Description (optional)
               </label>
@@ -146,11 +152,11 @@ export default function ListSpotPage() {
                 disabled={loading || success}
                 maxLength={500}
                 rows={4}
-                placeholder="Describe your parking spot..."
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed sm:text-sm"
+                placeholder="Describe your parking spot (e.g., covered, secure, EV charging available)..."
+                className="focus-glow mt-2 block w-full appearance-none rounded-lg border-2 border-gray-300 px-4 py-3 placeholder-gray-400 transition-all focus:border-yellow-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-              <p className="mt-1 text-sm text-gray-500">
-                {description.length}/500
+              <p className="mt-2 text-sm text-gray-600">
+                {description.length}/500 characters
               </p>
             </div>
 
@@ -158,13 +164,13 @@ export default function ListSpotPage() {
             <div>
               <label
                 htmlFor="pricePerDay"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-bold text-gray-900"
               >
                 Price per Day <span className="text-red-500">*</span>
               </label>
-              <div className="relative mt-1">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="text-gray-500 sm:text-sm">$</span>
+              <div className="relative mt-2">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                  <span className="text-lg font-bold text-gray-700">$</span>
                 </div>
                 <input
                   id="pricePerDay"
@@ -176,38 +182,38 @@ export default function ListSpotPage() {
                   min={5}
                   step={5}
                   placeholder="20"
-                  className="block w-full rounded-md border border-gray-300 py-2 pl-7 pr-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed sm:text-sm"
+                  className="focus-glow block w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 placeholder-gray-400 transition-all focus:border-yellow-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
               </div>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-600">
                 Minimum $5, increments of $5
               </p>
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <p className="text-sm text-red-800">{error}</p>
+              <div className="animate-slide-in rounded-lg border-l-4 border-red-500 bg-red-50 p-4">
+                <p className="font-medium text-red-800">{error}</p>
               </div>
             )}
 
             {/* Success Message */}
             {success && (
-              <div className="rounded-md bg-green-50 p-4">
-                <p className="text-sm text-green-800">
-                  Spot created! Redirecting to your spots...
+              <div className="animate-slide-in rounded-lg border-l-4 border-green-500 bg-green-50 p-4">
+                <p className="font-medium text-green-800">
+                  ✓ Spot created! Redirecting to your spots...
                 </p>
               </div>
             )}
 
             {/* Submit Button */}
-            <div>
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={loading || success}
-                className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
+                className="btn-accent flex w-full justify-center text-lg font-bold uppercase tracking-wide disabled:opacity-50"
               >
-                {loading ? 'Creating Listing...' : 'Create Listing'}
+                {loading ? 'Creating Listing...' : '🅿️ Create Listing'}
               </button>
             </div>
           </form>
