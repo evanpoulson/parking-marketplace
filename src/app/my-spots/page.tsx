@@ -55,14 +55,14 @@ export default function MySpotsPage() {
         {loading && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+              <div key={i} className="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
                 <div className="mb-4 flex items-center justify-between">
-                  <div className="h-8 w-32 rounded-md bg-gray-200"></div>
-                  <div className="h-8 w-24 rounded-full bg-gray-200"></div>
+                  <div className="animate-shimmer h-8 w-32 rounded-md"></div>
+                  <div className="animate-shimmer h-8 w-24 rounded-full"></div>
                 </div>
-                <div className="mb-3 h-6 w-3/4 rounded bg-gray-200"></div>
-                <div className="mb-4 h-10 w-32 rounded bg-gray-200"></div>
-                <div className="h-4 w-full rounded bg-gray-200"></div>
+                <div className="animate-shimmer mb-3 h-6 w-3/4 rounded"></div>
+                <div className="animate-shimmer mb-4 h-10 w-32 rounded"></div>
+                <div className="animate-shimmer h-4 w-full rounded"></div>
               </div>
             ))}
           </div>
@@ -99,41 +99,48 @@ export default function MySpotsPage() {
         {/* Spots Grid */}
         {!loading && !error && spots.length > 0 && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {spots.map((spot) => (
+            {spots.map((spot, index) => (
               <div
                 key={spot.id}
-                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+                className="card-lift card-depth rounded-lg border-l-4 border-yellow-400 bg-white p-6 shadow-lg"
+                style={{
+                  animation: `scaleIn 0.4s ease-out ${index * 0.1}s forwards`,
+                  opacity: 0
+                }}
               >
                 {/* Neighborhood Badge */}
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                  <span className="animate-pulse-badge inline-block rounded-md bg-blue-800 px-3 py-1.5 text-sm font-bold uppercase tracking-wide text-white shadow-md">
                     {spot.neighborhood}
                   </span>
                   {/* Availability Badge */}
                   {spot.is_available ? (
-                    <span className="inline-block rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
-                      Available
+                    <span className="inline-flex items-center gap-1 rounded-md bg-green-100 px-3 py-1.5 text-sm font-bold text-green-800 shadow-sm">
+                      <span>✓</span> Available
                     </span>
                   ) : (
-                    <span className="inline-block rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
-                      Booked
+                    <span className="inline-flex items-center gap-1 rounded-md bg-yellow-100 px-3 py-1.5 text-sm font-bold text-yellow-800 shadow-sm">
+                      <span>⏱</span> Booked
                     </span>
                   )}
                 </div>
 
-                {/* Address */}
-                <h3 className="mb-2 text-lg font-bold text-gray-900">
+                {/* Address with icon */}
+                <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900">
+                  <span className="text-base">📍</span>
                   {spot.address}
                 </h3>
 
-                {/* Price */}
-                <p className="mb-3 text-2xl font-bold text-blue-600">
-                  ${spot.price_per_day}/day
-                </p>
+                {/* Price - More prominent */}
+                <div className="mb-3 rounded-lg bg-yellow-50 px-4 py-3 border-l-4 border-yellow-400">
+                  <p className="font-mono text-3xl font-bold text-yellow-600">
+                    ${spot.price_per_day}<span className="text-lg text-gray-600">/day</span>
+                  </p>
+                </div>
 
                 {/* Description */}
                 {spot.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">
+                  <p className="text-sm leading-relaxed text-gray-700 line-clamp-2">
                     {spot.description}
                   </p>
                 )}

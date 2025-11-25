@@ -94,15 +94,20 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="hero-grid-light relative overflow-hidden bg-white border-b-4 border-yellow-400 py-24">
-        {/* Diagonal accent stripe */}
-        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-yellow-400/5 to-transparent"></div>
+      <div className="hero-grid-light parking-lines noise-texture relative overflow-hidden bg-white border-b-4 border-yellow-400 py-24">
+        {/* Diagonal accent stripe with gradient */}
+        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-yellow-400/10 via-yellow-400/5 to-transparent"></div>
+        <div className="absolute left-0 bottom-0 h-1/2 w-1/2 bg-gradient-to-tr from-blue-800/5 to-transparent"></div>
 
-        {/* Parking sign accent */}
-        <div className="absolute left-8 top-8 text-6xl opacity-10">🅿️</div>
-        <div className="absolute right-16 bottom-12 text-6xl opacity-10">🅿️</div>
+        {/* Decorative geometric shapes */}
+        <div className="absolute left-12 top-20 h-24 w-24 rotate-12 rounded-lg border-4 border-yellow-400/20"></div>
+        <div className="absolute right-20 top-32 h-16 w-16 rotate-45 border-4 border-blue-800/20"></div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Parking sign accent - with bounce animation */}
+        <div className="absolute left-8 top-8 text-6xl opacity-10 animate-bounce-soft">🅿️</div>
+        <div className="absolute right-16 bottom-12 text-6xl opacity-10 animate-bounce-soft" style={{animationDelay: '1s'}}>🅿️</div>
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" style={{zIndex: 10}}>
           <div className="text-center">
             <h1 className="animate-fade-in text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
               Find Your Perfect<br />Parking Spot in Calgary
@@ -143,16 +148,16 @@ export default function HomePage() {
           {(userLoading || spotsLoading) && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+                <div key={i} className="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
                   <div className="mb-4 flex items-center justify-between">
-                    <div className="h-8 w-32 rounded-md bg-gray-200"></div>
-                    <div className="h-8 w-8 rounded-full bg-gray-200"></div>
+                    <div className="animate-shimmer h-8 w-32 rounded-md"></div>
+                    <div className="animate-shimmer h-8 w-8 rounded-full"></div>
                   </div>
-                  <div className="mb-3 h-6 w-3/4 rounded bg-gray-200"></div>
-                  <div className="mb-4 h-10 w-32 rounded bg-gray-200"></div>
+                  <div className="animate-shimmer mb-3 h-6 w-3/4 rounded"></div>
+                  <div className="animate-shimmer mb-4 h-10 w-32 rounded"></div>
                   <div className="space-y-2">
-                    <div className="h-4 w-full rounded bg-gray-200"></div>
-                    <div className="h-4 w-5/6 rounded bg-gray-200"></div>
+                    <div className="animate-shimmer h-4 w-full rounded"></div>
+                    <div className="animate-shimmer h-4 w-5/6 rounded"></div>
                   </div>
                 </div>
               ))}
@@ -194,29 +199,32 @@ export default function HomePage() {
                 <Link
                   key={spot.id}
                   href={`/spots/${spot.id}`}
-                  className="card-lift border-accent-hover group cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-md"
+                  className="card-lift card-depth border-accent-hover group cursor-pointer rounded-lg border-l-4 border-transparent bg-white p-6 shadow-lg"
                   style={{
                     animation: `scaleIn 0.4s ease-out ${index * 0.1}s forwards`,
                     opacity: 0
                   }}
                 >
-                  {/* Neighborhood Badge */}
+                  {/* Neighborhood Badge with pulse animation */}
                   <div className="mb-4 flex items-center justify-between">
-                    <span className="inline-block rounded-md bg-blue-800 px-3 py-1.5 text-sm font-bold uppercase tracking-wide text-white">
+                    <span className="animate-pulse-badge inline-block rounded-md bg-blue-800 px-3 py-1.5 text-sm font-bold uppercase tracking-wide text-white shadow-md">
                       {spot.neighborhood}
                     </span>
-                    <span className="text-2xl">🅿️</span>
+                    <span className="text-3xl transition-transform group-hover:scale-110 duration-300">🅿️</span>
                   </div>
 
-                  {/* Address */}
-                  <h3 className="mb-3 text-xl font-bold text-gray-900 group-hover:text-blue-800 transition-colors">
+                  {/* Address with icon */}
+                  <h3 className="mb-3 flex items-center gap-2 text-xl font-bold text-gray-900 group-hover:text-blue-800 transition-colors">
+                    <span className="text-base">📍</span>
                     {spot.address}
                   </h3>
 
-                  {/* Price */}
-                  <p className="mb-4 font-mono text-3xl font-bold text-yellow-600">
-                    ${spot.price_per_day}<span className="text-lg text-gray-700">/day</span>
-                  </p>
+                  {/* Price - More prominent */}
+                  <div className="mb-4 rounded-lg bg-yellow-50 px-4 py-3 border-l-4 border-yellow-400">
+                    <p className="font-mono text-4xl font-bold text-yellow-600">
+                      ${spot.price_per_day}<span className="text-xl text-gray-600">/day</span>
+                    </p>
+                  </div>
 
                   {/* Description */}
                   {spot.description && (

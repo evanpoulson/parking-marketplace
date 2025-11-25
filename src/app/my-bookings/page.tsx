@@ -127,18 +127,18 @@ export default function MyBookingsPage() {
         {loading && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+              <div key={i} className="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
                 <div className="mb-4 flex items-center justify-between">
-                  <div className="h-8 w-32 rounded-md bg-gray-200"></div>
-                  <div className="h-8 w-24 rounded-full bg-gray-200"></div>
+                  <div className="animate-shimmer h-8 w-32 rounded-md"></div>
+                  <div className="animate-shimmer h-8 w-24 rounded-full"></div>
                 </div>
-                <div className="mb-3 h-6 w-3/4 rounded bg-gray-200"></div>
-                <div className="mb-4 h-10 w-32 rounded bg-gray-200"></div>
+                <div className="animate-shimmer mb-3 h-6 w-3/4 rounded"></div>
+                <div className="animate-shimmer mb-4 h-10 w-32 rounded"></div>
                 <div className="space-y-2">
-                  <div className="h-4 w-full rounded bg-gray-200"></div>
-                  <div className="h-4 w-2/3 rounded bg-gray-200"></div>
+                  <div className="animate-shimmer h-4 w-full rounded"></div>
+                  <div className="animate-shimmer h-4 w-2/3 rounded"></div>
                 </div>
-                <div className="mt-4 h-10 w-full rounded bg-gray-200"></div>
+                <div className="animate-shimmer mt-4 h-10 w-full rounded"></div>
               </div>
             ))}
           </div>
@@ -175,47 +175,54 @@ export default function MyBookingsPage() {
         {/* Bookings Grid */}
         {!loading && !error && bookings.length > 0 && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {bookings.map((booking) => (
+            {bookings.map((booking, index) => (
               <div
                 key={booking.id}
-                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+                className="card-lift card-depth rounded-lg border-l-4 border-green-400 bg-white p-6 shadow-lg"
+                style={{
+                  animation: `scaleIn 0.4s ease-out ${index * 0.1}s forwards`,
+                  opacity: 0
+                }}
               >
                 {/* Neighborhood Badge and Status */}
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                  <span className="animate-pulse-badge inline-block rounded-md bg-blue-800 px-3 py-1.5 text-sm font-bold uppercase tracking-wide text-white shadow-md">
                     {booking.spot.neighborhood}
                   </span>
-                  <span className="inline-block rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
-                    Confirmed
+                  <span className="inline-flex items-center gap-1 rounded-md bg-green-100 px-3 py-1.5 text-sm font-bold text-green-800 shadow-sm">
+                    <span>✓</span> Confirmed
                   </span>
                 </div>
 
-                {/* Address */}
-                <h3 className="mb-2 text-lg font-bold text-gray-900">
+                {/* Address with icon */}
+                <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900">
+                  <span className="text-base">📍</span>
                   {booking.spot.address}
                 </h3>
 
-                {/* Price */}
-                <p className="mb-3 text-2xl font-bold text-blue-600">
-                  ${booking.spot.price_per_day}/day
-                </p>
+                {/* Price - More prominent */}
+                <div className="mb-3 rounded-lg bg-yellow-50 px-4 py-3 border-l-4 border-yellow-400">
+                  <p className="font-mono text-3xl font-bold text-yellow-600">
+                    ${booking.spot.price_per_day}<span className="text-lg text-gray-600">/day</span>
+                  </p>
+                </div>
 
                 {/* Description */}
                 {booking.spot.description && (
-                  <p className="mb-3 text-sm text-gray-600">
+                  <p className="mb-3 text-sm leading-relaxed text-gray-700">
                     {truncateDescription(booking.spot.description, 150)}
                   </p>
                 )}
 
                 {/* Booking Date */}
-                <p className="mb-4 text-sm text-gray-600">
-                  Booked on {formatDate(booking.created_at)}
+                <p className="mb-4 flex items-center gap-2 text-sm font-medium text-gray-600">
+                  <span>📅</span> Booked on {formatDate(booking.created_at)}
                 </p>
 
                 {/* Cancel Booking Button */}
                 <button
                   onClick={() => handleCancelClick(booking.id)}
-                  className="w-full rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="btn-press w-full rounded-lg border-2 border-red-300 bg-white px-4 py-2.5 text-sm font-bold text-red-700 transition-all hover:bg-red-50 hover:border-red-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   Cancel Booking
                 </button>

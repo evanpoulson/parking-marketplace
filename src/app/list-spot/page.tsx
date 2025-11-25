@@ -211,9 +211,9 @@ export default function ListSpotPage() {
               <button
                 type="submit"
                 disabled={loading || success}
-                className="btn-accent flex w-full justify-center text-lg font-bold uppercase tracking-wide disabled:opacity-50"
+                className="btn-accent btn-press relative flex w-full justify-center text-lg font-bold uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating Listing...' : '🅿️ Create Listing'}
+                <span className="relative z-10">{loading ? 'Creating Listing...' : '🅿️ Create Listing'}</span>
               </button>
             </div>
           </form>
