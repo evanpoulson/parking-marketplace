@@ -17,6 +17,11 @@ export default function MySpotsPage() {
   const [spots, setSpots] = useState<Spot[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [spotToDelete, setSpotToDelete] = useState<Spot | null>(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+  const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   useEffect(() => {
     const fetchMySpots = async () => {
@@ -39,6 +44,55 @@ export default function MySpotsPage() {
 
     fetchMySpots()
   }, [])
+
+  const handleDeleteClick = (spot: Spot) => {
+    setSpotToDelete(spot)
+    setShowDeleteDialog(true)
+    setDeleteError('')
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!spotToDelete) return
+
+    setDeleteLoading(true)
+    setDeleteError('')
+
+    try {
+      const response = await fetch(`/api/spots/${spotToDelete.id}`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to delete spot')
+      }
+
+      // Success!
+      setDeleteSuccess(true)
+
+      // Remove the deleted spot from the list
+      setSpots(spots.filter(s => s.id !== spotToDelete.id))
+
+      // Close dialog after a brief delay
+      setTimeout(() => {
+        setShowDeleteDialog(false)
+        setDeleteSuccess(false)
+        setSpotToDelete(null)
+      }, 1500)
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete spot')
+      setDeleteLoading(false)
+    }
+  }
+
+  const handleCloseDeleteDialog = () => {
+    if (!deleteLoading) {
+      setShowDeleteDialog(false)
+      setDeleteError('')
+      setSpotToDelete(null)
+    }
+  }
 
   return (
     <div className="min-h-screen py-12">
@@ -140,15 +194,87 @@ export default function MySpotsPage() {
 
                 {/* Description */}
                 {spot.description && (
-                  <p className="text-sm leading-relaxed text-gray-700 line-clamp-2">
+                  <p className="mb-4 text-sm leading-relaxed text-gray-700 line-clamp-2">
                     {spot.description}
                   </p>
                 )}
+
+                {/* Delete Button */}
+                <button
+                  onClick={() => handleDeleteClick(spot)}
+                  className="btn-press mt-4 w-full rounded-lg border-2 border-red-300 bg-white px-4 py-2.5 text-sm font-bold text-red-700 transition-all hover:bg-red-50 hover:border-red-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  🗑️ Delete Spot
+                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && spotToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="mb-4 text-xl font-bold text-gray-900">
+              Delete Spot
+            </h3>
+
+            {deleteSuccess ? (
+              <div className="mb-6 rounded-md bg-green-50 p-4">
+                <p className="text-sm font-medium text-green-800">
+                  ✓ Spot deleted successfully!
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <p className="mb-2 text-gray-700">
+                    Are you sure you want to delete this listing?
+                  </p>
+                  <div className="rounded-lg bg-gray-50 p-3 mb-3">
+                    <p className="font-semibold text-gray-900">{spotToDelete.address}</p>
+                    <p className="text-sm text-gray-600">{spotToDelete.neighborhood}</p>
+                  </div>
+                  {!spotToDelete.is_available && (
+                    <div className="rounded-lg bg-yellow-50 border-l-4 border-yellow-400 p-3">
+                      <p className="text-sm font-medium text-yellow-800">
+                        ⚠️ This spot has an active booking. Deleting it will cancel the booking.
+                      </p>
+                    </div>
+                  )}
+                  <p className="mt-3 text-sm text-gray-600">
+                    This action cannot be undone.
+                  </p>
+                </div>
+
+                {deleteError && (
+                  <div className="mb-4 rounded-md bg-red-50 p-4">
+                    <p className="text-sm text-red-800">{deleteError}</p>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleConfirmDelete}
+                    disabled={deleteLoading}
+                    className="flex-1 rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-red-400 disabled:cursor-not-allowed"
+                  >
+                    {deleteLoading ? 'Deleting...' : 'Confirm Delete'}
+                  </button>
+                  <button
+                    onClick={handleCloseDeleteDialog}
+                    disabled={deleteLoading}
+                    className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
