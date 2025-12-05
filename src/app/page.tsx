@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
+import SearchBar from '@/components/SearchBar'
 
 interface Spot {
   id: string
@@ -12,9 +14,15 @@ interface Spot {
   description: string
   price_per_day: number
   owner_id: string
+  image_url?: string
   owner: {
     name: string
   }
+}
+
+interface NeighborhoodGroup {
+  neighborhood: string
+  spots: Spot[]
 }
 
 export default function HomePage() {
@@ -23,7 +31,22 @@ export default function HomePage() {
   const [spots, setSpots] = useState<Spot[]>([])
   const [spotsLoading, setSpotsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isSearchBarSticky, setIsSearchBarSticky] = useState(false)
   const supabase = createClient()
+  const searchBarRef = useRef<HTMLDivElement>(null)
+
+  // Handle sticky search bar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (searchBarRef.current) {
+        const offset = searchBarRef.current.offsetTop
+        setIsSearchBarSticky(window.scrollY > offset - 20)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Fetch user
   useEffect(() => {
@@ -53,7 +76,6 @@ export default function HomePage() {
 
   // Fetch spots - only when user data is ready
   useEffect(() => {
-    // Don't fetch spots until we know if user is logged in
     if (userLoading) return
 
     const fetchSpots = async () => {
@@ -86,78 +108,76 @@ export default function HomePage() {
     fetchSpots()
   }, [user, userLoading])
 
+  // Group spots by neighborhood
+  const groupedSpots: NeighborhoodGroup[] = spots.reduce((acc, spot) => {
+    const existing = acc.find(g => g.neighborhood === spot.neighborhood)
+    if (existing) {
+      existing.spots.push(spot)
+    } else {
+      acc.push({ neighborhood: spot.neighborhood, spots: [spot] })
+    }
+    return acc
+  }, [] as NeighborhoodGroup[])
+
   const truncateDescription = (text: string, maxLength: number) => {
+    if (!text) return ''
     if (text.length <= maxLength) return text
     return text.slice(0, maxLength) + '...'
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <div className="hero-grid-light parking-lines noise-texture relative overflow-hidden bg-white border-b-4 border-yellow-400 py-24">
-        {/* Diagonal accent stripe with gradient */}
-        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-yellow-400/10 via-yellow-400/5 to-transparent"></div>
-        <div className="absolute left-0 bottom-0 h-1/2 w-1/2 bg-gradient-to-tr from-blue-800/5 to-transparent"></div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Condensed Hero Section with SearchBar */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-yellow-50 border-b border-gray-200">
+        {/* Decorative elements */}
+        <div className="absolute left-8 top-8 text-4xl opacity-5">🅿️</div>
+        <div className="absolute right-12 top-12 text-4xl opacity-5">🅿️</div>
 
-        {/* Decorative geometric shapes */}
-        <div className="absolute left-12 top-20 h-24 w-24 rotate-12 rounded-lg border-4 border-yellow-400/20"></div>
-        <div className="absolute right-20 top-32 h-16 w-16 rotate-45 border-4 border-blue-800/20"></div>
-
-        {/* Parking sign accent - with bounce animation */}
-        <div className="absolute left-8 top-8 text-6xl opacity-10 animate-bounce-soft">🅿️</div>
-        <div className="absolute right-16 bottom-12 text-6xl opacity-10 animate-bounce-soft" style={{animationDelay: '1s'}}>🅿️</div>
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" style={{zIndex: 10}}>
-          <div className="text-center">
-            <h1 className="animate-fade-in text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
-              Find Your Perfect<br />Parking Spot in Calgary
+        <div className="mx-auto max-w-7xl px-4 pt-12 pb-8 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-3">
+              Find Your Perfect Parking Spot in Calgary
             </h1>
-            <p className="animate-fade-in-delay mx-auto mt-6 max-w-2xl text-xl text-gray-700">
-              Connect with local parking spot owners. Simple. Fast. Reliable.
-            </p>
+            {user && (
+              <p className="text-lg text-gray-700">
+                Welcome back, <span className="font-semibold text-blue-800">{user.user_metadata?.name || 'there'}</span>!
+              </p>
+            )}
+          </div>
 
-            <div className="mt-10">
-              {user ? (
-                <p className="animate-fade-in-delay text-2xl font-bold text-gray-900">
-                  Welcome back, <span className="text-blue-800">{user.user_metadata?.name || 'there'}</span>!
-                </p>
-              ) : (
-                <Link
-                  href="/auth"
-                  className="animate-float inline-block rounded-lg bg-yellow-400 px-8 py-4 text-lg font-bold text-gray-900 shadow-lg transition-all hover:bg-yellow-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-                >
-                  Get Started
-                </Link>
-              )}
-            </div>
+          {/* SearchBar */}
+          <div ref={searchBarRef} className="relative z-40">
+            <SearchBar />
           </div>
         </div>
       </div>
 
-      {/* Available Spots Section - Only show when user is logged in */}
-      {user && (
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-              Available Parking Spots
-            </h2>
-            <div className="mx-auto mt-2 h-1 w-24 bg-yellow-400"></div>
+      {/* Sticky SearchBar */}
+      {isSearchBarSticky && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 py-4 animate-slide-in">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <SearchBar />
           </div>
+        </div>
+      )}
 
-          {/* Loading State - Skeleton Loaders */}
+      {/* Main Content */}
+      {user ? (
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Loading State */}
           {(userLoading || spotsLoading) && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div className="animate-shimmer h-8 w-32 rounded-md"></div>
-                    <div className="animate-shimmer h-8 w-8 rounded-full"></div>
-                  </div>
-                  <div className="animate-shimmer mb-3 h-6 w-3/4 rounded"></div>
-                  <div className="animate-shimmer mb-4 h-10 w-32 rounded"></div>
-                  <div className="space-y-2">
-                    <div className="animate-shimmer h-4 w-full rounded"></div>
-                    <div className="animate-shimmer h-4 w-5/6 rounded"></div>
+            <div className="space-y-12">
+              {[1, 2].map((section) => (
+                <div key={section}>
+                  <div className="animate-shimmer h-8 w-64 rounded mb-6"></div>
+                  <div className="flex gap-4 overflow-hidden">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="flex-shrink-0 w-80">
+                        <div className="animate-shimmer h-64 w-full rounded-xl mb-3"></div>
+                        <div className="animate-shimmer h-6 w-3/4 rounded mb-2"></div>
+                        <div className="animate-shimmer h-8 w-32 rounded"></div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -166,84 +186,245 @@ export default function HomePage() {
 
           {/* Error State */}
           {!userLoading && !spotsLoading && error && (
-            <div className="animate-slide-in rounded-lg border-l-4 border-red-500 bg-red-50 p-6">
+            <div className="animate-slide-in rounded-xl border-l-4 border-red-500 bg-red-50 p-6">
               <p className="text-center font-medium text-red-800">{error}</p>
             </div>
           )}
 
           {/* Empty State */}
           {!userLoading && !spotsLoading && !error && spots.length === 0 && (
-            <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-yellow-100">
-                <span className="text-5xl">🅿️</span>
+            <div className="rounded-2xl border-2 border-dashed border-gray-300 bg-white p-16 text-center">
+              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-yellow-100">
+                <span className="text-6xl">🅿️</span>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-gray-900">
+              <h3 className="mb-3 text-2xl font-bold text-gray-900">
                 No Parking Spots Available
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-8 text-lg">
                 Be the first to list a spot in your neighborhood!
               </p>
               <Link
                 href="/list-spot"
-                className="mt-6 inline-block rounded-lg bg-yellow-400 px-6 py-3 font-bold text-gray-900 transition-all hover:bg-yellow-300 hover:shadow-lg"
+                className="inline-block rounded-xl bg-gradient-to-r from-pink-500 to-red-500 px-8 py-4 font-bold text-white transition-all hover:from-pink-600 hover:to-red-600 hover:shadow-lg"
               >
                 List Your First Spot
               </Link>
             </div>
           )}
 
-          {/* Spots Grid */}
-          {!userLoading && !spotsLoading && !error && spots.length > 0 && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {spots.map((spot, index) => (
-                <Link
-                  key={spot.id}
-                  href={`/spots/${spot.id}`}
-                  className="card-lift card-depth border-accent-hover group cursor-pointer rounded-lg border-l-4 border-transparent bg-white p-6 shadow-lg"
-                  style={{
-                    animation: `scaleIn 0.4s ease-out ${index * 0.1}s forwards`,
-                    opacity: 0
-                  }}
-                >
-                  {/* Neighborhood Badge with pulse animation */}
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="animate-pulse-badge inline-block rounded-md bg-blue-800 px-3 py-1.5 text-sm font-bold uppercase tracking-wide text-white shadow-md">
-                      {spot.neighborhood}
-                    </span>
-                    <span className="text-3xl transition-transform group-hover:scale-110 duration-300">🅿️</span>
-                  </div>
-
-                  {/* Address with icon */}
-                  <h3 className="mb-3 flex items-center gap-2 text-xl font-bold text-gray-900 group-hover:text-blue-800 transition-colors">
-                    <span className="text-base">📍</span>
-                    {spot.address}
-                  </h3>
-
-                  {/* Price - More prominent */}
-                  <div className="mb-4 rounded-lg bg-yellow-50 px-4 py-3 border-l-4 border-yellow-400">
-                    <p className="font-mono text-4xl font-bold text-yellow-600">
-                      ${spot.price_per_day}<span className="text-xl text-gray-600">/day</span>
-                    </p>
-                  </div>
-
-                  {/* Description */}
-                  {spot.description && (
-                    <p className="text-sm leading-relaxed text-gray-700">
-                      {truncateDescription(spot.description, 100)}
-                    </p>
-                  )}
-
-                  {/* Hover indicator */}
-                  <div className="mt-4 flex items-center text-sm font-semibold text-blue-800 opacity-0 transition-opacity group-hover:opacity-100">
-                    <span>View Details</span>
-                    <span className="ml-1">→</span>
-                  </div>
-                </Link>
+          {/* Neighborhood Carousels */}
+          {!userLoading && !spotsLoading && !error && groupedSpots.length > 0 && (
+            <div className="space-y-12">
+              {groupedSpots.map((group, groupIndex) => (
+                <NeighborhoodCarousel
+                  key={group.neighborhood}
+                  neighborhood={group.neighborhood}
+                  spots={group.spots}
+                  groupIndex={groupIndex}
+                  truncateDescription={truncateDescription}
+                />
               ))}
             </div>
           )}
         </div>
+      ) : (
+        // Non-logged-in state
+        <div className="mx-auto max-w-4xl px-4 py-24 text-center">
+          <div className="mb-8 flex justify-center">
+            <span className="text-8xl">🅿️</span>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Ready to Find Your Spot?
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Sign in to browse available parking spots in Calgary
+          </p>
+          <Link
+            href="/auth"
+            className="inline-block rounded-xl bg-gradient-to-r from-pink-500 to-red-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:from-pink-600 hover:to-red-600 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+          >
+            Get Started
+          </Link>
+        </div>
       )}
     </div>
+  )
+}
+
+// Neighborhood Carousel Component
+function NeighborhoodCarousel({
+  neighborhood,
+  spots,
+  groupIndex,
+  truncateDescription,
+}: {
+  neighborhood: string
+  spots: Spot[]
+  groupIndex: number
+  truncateDescription: (text: string, maxLength: number) => string
+}) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 340 // Card width + gap
+      const newScrollLeft =
+        scrollContainerRef.current.scrollLeft +
+        (direction === 'left' ? -scrollAmount : scrollAmount)
+
+      scrollContainerRef.current.scrollTo({
+        left: newScrollLeft,
+        behavior: 'smooth',
+      })
+    }
+  }
+
+  return (
+    <div
+      className="animate-fade-in"
+      style={{
+        animationDelay: `${groupIndex * 0.1}s`,
+        opacity: 0,
+        animationFillMode: 'forwards',
+      }}
+    >
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Popular in <span className="text-blue-800">{neighborhood}</span>
+        </h2>
+        <div className="flex gap-2">
+          <button
+            onClick={() => scroll('left')}
+            className="rounded-full bg-white border-2 border-gray-300 p-3 shadow-md hover:border-gray-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            aria-label="Scroll left"
+          >
+            <svg
+              className="w-5 h-5 text-gray-900"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="rounded-full bg-white border-2 border-gray-300 p-3 shadow-md hover:border-gray-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Scroll right"
+          >
+            <svg
+              className="w-5 h-5 text-gray-900"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Carousel */}
+      <div
+        ref={scrollContainerRef}
+        className="flex gap-5 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
+      >
+        {spots.map((spot, index) => (
+          <SpotCard
+            key={spot.id}
+            spot={spot}
+            index={index}
+            truncateDescription={truncateDescription}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Airbnb-style Spot Card Component
+function SpotCard({
+  spot,
+  index,
+  truncateDescription,
+}: {
+  spot: Spot
+  index: number
+  truncateDescription: (text: string, maxLength: number) => string
+}) {
+  const [imageError, setImageError] = useState(false)
+
+  return (
+    <Link
+      href={`/spots/${spot.id}`}
+      className="group flex-shrink-0 w-80 cursor-pointer transition-all duration-300 hover:scale-105"
+      style={{
+        animation: `scaleIn 0.4s ease-out ${index * 0.1}s forwards`,
+        opacity: 0,
+      }}
+    >
+      {/* Image Container */}
+      <div className="relative h-72 w-full overflow-hidden rounded-2xl bg-gray-200 mb-3 shadow-md group-hover:shadow-2xl transition-shadow">
+        {spot.image_url && !imageError ? (
+          <Image
+            src={spot.image_url}
+            alt={spot.address}
+            fill
+            className="object-cover group-hover:scale-110 transition-transform duration-500"
+            onError={() => setImageError(true)}
+            sizes="(max-width: 768px) 100vw, 320px"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+            <span className="text-8xl opacity-40">🅿️</span>
+          </div>
+        )}
+
+        {/* Neighborhood Badge Overlay */}
+        <div className="absolute bottom-3 left-3">
+          <span className="inline-block rounded-lg bg-white/95 backdrop-blur-sm px-3 py-2 text-sm font-bold text-gray-900 shadow-lg">
+            {spot.neighborhood}
+          </span>
+        </div>
+      </div>
+
+      {/* Card Info */}
+      <div className="px-1">
+        {/* Address */}
+        <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate group-hover:text-blue-800 transition-colors">
+          {spot.address}
+        </h3>
+
+        {/* Description */}
+        {spot.description && (
+          <p className="text-sm text-gray-600 mb-2 line-clamp-1">
+            {truncateDescription(spot.description, 60)}
+          </p>
+        )}
+
+        {/* Price */}
+        <div className="flex items-baseline gap-1">
+          <span className="text-xl font-bold text-gray-900">
+            ${spot.price_per_day}
+          </span>
+          <span className="text-sm text-gray-600">/ day</span>
+        </div>
+      </div>
+    </Link>
   )
 }

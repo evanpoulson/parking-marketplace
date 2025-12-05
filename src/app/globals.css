@@ -370,6 +370,124 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 1;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* React Day Picker Calendar Styling */
+.search-bar-calendar {
+  --rdp-cell-size: 44px;
+  --rdp-accent-color: #3b82f6;
+  --rdp-background-color: #dbeafe;
+  font-family: var(--font-body);
+}
+
+.search-bar-calendar .rdp-months {
+  gap: 2rem;
+}
+
+.search-bar-calendar .rdp-month {
+  background: white;
+}
+
+.search-bar-calendar .rdp-caption {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.search-bar-calendar .rdp-nav {
+  position: absolute;
+  top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-bar-calendar .rdp-nav_button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+.search-bar-calendar .rdp-nav_button:hover {
+  background: #f3f4f6;
+  border-color: #3b82f6;
+}
+
+.search-bar-calendar .rdp-head_cell {
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  padding: 0.5rem;
+}
+
+.search-bar-calendar .rdp-cell {
+  padding: 2px;
+}
+
+.search-bar-calendar .rdp-day {
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  border-radius: 50%;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.search-bar-calendar .rdp-day:hover:not(.rdp-day_selected) {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+}
+
+.search-bar-calendar .rdp-day_selected {
+  background-color: #3b82f6 !important;
+  color: white;
+  font-weight: 600;
+}
+
+.search-bar-calendar .rdp-day_selected:hover {
+  background-color: #2563eb !important;
+}
+
+.search-bar-calendar .rdp-day_range_middle {
+  background-color: #dbeafe !important;
+  color: #1e40af;
+  border-radius: 0;
+}
+
+.search-bar-calendar .rdp-day_range_start {
+  border-radius: 50% 0 0 50% !important;
+}
+
+.search-bar-calendar .rdp-day_range_end {
+  border-radius: 0 50% 50% 0 !important;
+}
+
+.search-bar-calendar .rdp-day_disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.search-bar-calendar .rdp-day_outside {
+  opacity: 0.3;
+}
+
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
