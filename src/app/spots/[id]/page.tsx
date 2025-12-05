@@ -64,7 +64,8 @@ export default function SpotDetailPage({
 
   const handleBookClick = () => {
     if (!user) {
-      router.push('/auth')
+      // Redirect to auth with return URL to come back to this spot
+      router.push(`/auth?returnTo=/spots/${id}`)
     } else {
       setShowDialog(true)
     }

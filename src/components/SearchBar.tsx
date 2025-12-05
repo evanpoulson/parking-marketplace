@@ -83,15 +83,15 @@ export default function SearchBar() {
   }
 
   return (
-    <div ref={searchBarRef} className="relative z-50 w-full max-w-4xl mx-auto">
+    <div ref={searchBarRef} className="relative w-full max-w-4xl mx-auto" style={{ zIndex: 100 }}>
       {/* Search Bar */}
-      <div className="bg-white rounded-full shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+      <div className="bg-white rounded-full shadow-lg border-2 border-gray-200 hover:shadow-xl transition-all duration-300">
         <div className="flex items-center divide-x divide-gray-300">
           {/* Where Section */}
           <button
             onClick={() => setActiveSection(activeSection === 'where' ? null : 'where')}
-            className={`flex-1 px-8 py-4 text-left rounded-l-full hover:bg-gray-100 transition-colors ${
-              activeSection === 'where' ? 'bg-gray-100 shadow-inner' : ''
+            className={`flex-1 px-8 py-4 text-left rounded-l-full hover:bg-gray-100 transition-all ${
+              activeSection === 'where' ? 'bg-blue-50 border-2 border-blue-500 shadow-inner' : 'border-2 border-transparent'
             }`}
           >
             <div className="text-xs font-semibold text-gray-900 mb-1">Where</div>
@@ -103,8 +103,8 @@ export default function SearchBar() {
           {/* When Section */}
           <button
             onClick={() => setActiveSection(activeSection === 'when' ? null : 'when')}
-            className={`flex-1 px-8 py-4 text-left hover:bg-gray-100 transition-colors ${
-              activeSection === 'when' ? 'bg-gray-100 shadow-inner' : ''
+            className={`flex-1 px-8 py-4 text-left hover:bg-gray-100 transition-all ${
+              activeSection === 'when' ? 'bg-blue-50 border-2 border-blue-500 shadow-inner' : 'border-2 border-transparent'
             }`}
           >
             <div className="text-xs font-semibold text-gray-900 mb-1">When</div>
@@ -112,10 +112,10 @@ export default function SearchBar() {
           </button>
 
           {/* Search Button */}
-          <button className="px-6 py-4 rounded-r-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 transition-all duration-300 hover:shadow-lg group">
+          <button className="px-6 py-4 rounded-r-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-300 hover:shadow-lg group border-2 border-transparent">
             <div className="flex items-center gap-2">
               <svg
-                className="w-5 h-5 text-white"
+                className="w-5 h-5 text-gray-900"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -127,7 +127,7 @@ export default function SearchBar() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              <span className="text-white font-semibold hidden md:inline">Search</span>
+              <span className="text-gray-900 font-semibold hidden md:inline">Search</span>
             </div>
           </button>
         </div>
@@ -135,7 +135,7 @@ export default function SearchBar() {
 
       {/* Where Dropdown */}
       {activeSection === 'where' && (
-        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in">
+        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in" style={{ zIndex: 110 }}>
           <div className="p-8">
             {/* Search Input */}
             <div className="mb-6">
@@ -221,7 +221,7 @@ export default function SearchBar() {
 
       {/* When Dropdown */}
       {activeSection === 'when' && (
-        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in">
+        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in" style={{ zIndex: 110 }}>
           <div className="p-8">
             {/* Quick Select Buttons */}
             <div className="mb-6">

@@ -146,7 +146,7 @@ export default function HomePage() {
           </div>
 
           {/* SearchBar */}
-          <div ref={searchBarRef} className="relative z-40">
+          <div ref={searchBarRef} className="relative">
             <SearchBar />
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function HomePage() {
 
       {/* Sticky SearchBar */}
       {isSearchBarSticky && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 py-4 animate-slide-in">
+        <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 py-4 animate-slide-in" style={{ zIndex: 90 }}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SearchBar />
           </div>
@@ -162,8 +162,7 @@ export default function HomePage() {
       )}
 
       {/* Main Content */}
-      {user ? (
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           {/* Loading State */}
           {(userLoading || spotsLoading) && (
             <div className="space-y-12">
@@ -203,12 +202,21 @@ export default function HomePage() {
               <p className="text-gray-600 mb-8 text-lg">
                 Be the first to list a spot in your neighborhood!
               </p>
-              <Link
-                href="/list-spot"
-                className="inline-block rounded-xl bg-gradient-to-r from-pink-500 to-red-500 px-8 py-4 font-bold text-white transition-all hover:from-pink-600 hover:to-red-600 hover:shadow-lg"
-              >
-                List Your First Spot
-              </Link>
+              {user ? (
+                <Link
+                  href="/list-spot"
+                  className="inline-block rounded-xl bg-yellow-400 px-8 py-4 font-bold text-gray-900 transition-all hover:bg-yellow-500 hover:shadow-lg"
+                >
+                  List Your First Spot
+                </Link>
+              ) : (
+                <Link
+                  href="/auth"
+                  className="inline-block rounded-xl bg-yellow-400 px-8 py-4 font-bold text-gray-900 transition-all hover:bg-yellow-500 hover:shadow-lg"
+                >
+                  Sign in to List a Spot
+                </Link>
+              )}
             </div>
           )}
 
@@ -226,27 +234,7 @@ export default function HomePage() {
               ))}
             </div>
           )}
-        </div>
-      ) : (
-        // Non-logged-in state
-        <div className="mx-auto max-w-4xl px-4 py-24 text-center">
-          <div className="mb-8 flex justify-center">
-            <span className="text-8xl">🅿️</span>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Ready to Find Your Spot?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Sign in to browse available parking spots in Calgary
-          </p>
-          <Link
-            href="/auth"
-            className="inline-block rounded-xl bg-gradient-to-r from-pink-500 to-red-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:from-pink-600 hover:to-red-600 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
-          >
-            Get Started
-          </Link>
-        </div>
-      )}
+      </div>
     </div>
   )
 }
