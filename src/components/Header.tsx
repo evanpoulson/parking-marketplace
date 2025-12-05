@@ -9,13 +9,13 @@ import SearchBar from './SearchBar'
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [searchExpanded, setSearchExpanded] = useState(false)
+  const [showSearchModal, setShowSearchModal] = useState(false)
   const supabase = createClient()
 
   // Handle scroll detection
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100)
+      setIsScrolled(window.scrollY > 80)
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -59,125 +59,125 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white shadow-md transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+      <header
+        className={`sticky top-0 z-50 bg-white transition-all duration-300 ${
+          isScrolled ? 'py-3 shadow-md' : 'py-6 shadow-sm'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-8 relative flex items-center">
 
-            {/* LEFT - Logo */}
-            <Link href="/" className="flex items-center flex-shrink-0">
-              <span className="text-2xl font-bold tracking-tight">
-                Park<span className="text-yellow-400">YYC</span>
-              </span>
-            </Link>
+          {/* Logo - Absolute Left */}
+          <Link
+            href="/"
+            className={`absolute left-8 font-bold tracking-tight transition-all duration-300 ${
+              isScrolled ? 'text-2xl' : 'text-3xl'
+            }`}
+          >
+            <span className="text-blue-600">Park</span>
+            <span className="text-yellow-400">YYC</span>
+          </Link>
 
-            {/* CENTER - Search Bar */}
-            <div className="flex-1 flex justify-center mx-8">
-              {!isScrolled || searchExpanded ? (
-                <div className="w-full max-w-3xl">
-                  <SearchBar mode="full" onCollapse={() => setSearchExpanded(false)} />
-                </div>
-              ) : (
-                <button
-                  onClick={() => setSearchExpanded(true)}
-                  className="flex items-center gap-3 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-full shadow-sm hover:shadow-md transition-all"
-                >
-                  <span className="text-sm font-semibold text-gray-700">Calgary</span>
-                  <span className="text-gray-300">|</span>
-                  <span className="text-sm font-semibold text-gray-700">Any week</span>
-                  <span className="text-gray-300">|</span>
-                  <span className="text-sm text-gray-500">Add guests</span>
-                  <div className="ml-2 bg-yellow-400 p-2 rounded-full">
-                    <svg
-                      className="w-4 h-4 text-gray-900"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </div>
-                </button>
-              )}
-            </div>
-
-            {/* RIGHT - User Menu */}
-            <div className="flex items-center gap-4 flex-shrink-0">
-              {user ? (
-                <>
-                  {/* Navigation Links */}
-                  <nav className="hidden lg:flex items-center gap-6 mr-4">
-                    <Link
-                      href="/"
-                      className="text-sm font-medium text-gray-700 hover:text-blue-800 transition-colors"
-                    >
-                      Browse
-                    </Link>
-                    <Link
-                      href="/list-spot"
-                      className="text-sm font-medium text-gray-700 hover:text-blue-800 transition-colors"
-                    >
-                      List a Spot
-                    </Link>
-                    <Link
-                      href="/my-spots"
-                      className="text-sm font-medium text-gray-700 hover:text-blue-800 transition-colors"
-                    >
-                      My Spots
-                    </Link>
-                    <Link
-                      href="/my-bookings"
-                      className="text-sm font-medium text-gray-700 hover:text-blue-800 transition-colors"
-                    >
-                      My Bookings
-                    </Link>
-                  </nav>
-
-                  <span className="hidden md:inline text-sm text-gray-700">
-                    Hi, <span className="font-semibold text-blue-800">{user.user_metadata?.name?.split(' ')[0] || 'there'}</span>
-                  </span>
-
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-md">
-                    <span className="text-sm font-bold text-white">{getUserInitials()}</span>
-                  </div>
-
-                  <button
-                    onClick={handleLogout}
-                    className="hidden md:inline-block text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          {/* Search - Centered */}
+          <div className="flex-1 flex justify-center">
+            {!isScrolled ? (
+              <div className="w-full max-w-3xl">
+                <SearchBar mode="full" />
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowSearchModal(true)}
+                className="flex items-center gap-3 px-6 py-3 bg-white border-2 border-gray-300 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <span className="text-sm font-semibold text-gray-700">Calgary</span>
+                <span className="text-gray-300">|</span>
+                <span className="text-sm font-semibold text-gray-700">Any week</span>
+                <span className="text-gray-300">|</span>
+                <span className="text-sm text-gray-500">Add guests</span>
+                <div className="ml-1 bg-yellow-400 p-2 rounded-full">
+                  <svg
+                    className="w-4 h-4 text-gray-900"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    Log Out
-                  </button>
-                </>
-              ) : (
-                <Link
-                  href="/auth"
-                  className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+              </button>
+            )}
+          </div>
+
+          {/* User Menu - Absolute Right */}
+          <div className={`absolute right-8 flex items-center gap-3 transition-all duration-300 ${
+            isScrolled ? 'text-sm' : ''
+          }`}>
+            {user ? (
+              <>
+                <span className="hidden md:inline text-gray-700">
+                  Hi, <span className="font-semibold text-blue-800">
+                    {user.user_metadata?.name?.split(' ')[0] || 'there'}
+                  </span>
+                </span>
+
+                <div className={`rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-md transition-all duration-300 ${
+                  isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+                }`}>
+                  <span className={`font-bold text-white transition-all duration-300 ${
+                    isScrolled ? 'text-xs' : 'text-sm'
+                  }`}>
+                    {getUserInitials()}
+                  </span>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="hidden md:inline-block text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
                 >
-                  Log In
-                </Link>
-              )}
-            </div>
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/auth"
+                className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+              >
+                Log In
+              </Link>
+            )}
           </div>
         </div>
       </header>
 
-      {/* Full Screen Search Overlay when expanded while scrolled */}
-      {isScrolled && searchExpanded && (
+      {/* Search Modal (when compact search is clicked) */}
+      {showSearchModal && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/40 z-[55]"
-            onClick={() => setSearchExpanded(false)}
+            className="fixed inset-0 bg-black/40 z-[100]"
+            onClick={() => setShowSearchModal(false)}
           />
 
-          {/* Search Modal */}
-          <div className="fixed top-20 left-1/2 -translate-x-1/2 w-full max-w-3xl z-[60] px-4">
-            <div className="bg-white rounded-3xl shadow-2xl p-6 animate-slide-in">
-              <SearchBar mode="full" onCollapse={() => setSearchExpanded(false)} />
+          {/* Modal Content */}
+          <div className="fixed inset-0 z-[101] flex items-start justify-center pt-24 px-4">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 relative animate-slide-in">
+              {/* Close Button */}
+              <button
+                onClick={() => setShowSearchModal(false)}
+                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Close search"
+              >
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              {/* Full Search Bar */}
+              <SearchBar mode="full" />
             </div>
           </div>
         </>
