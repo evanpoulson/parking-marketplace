@@ -128,7 +128,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Condensed Hero Section with SearchBar */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-yellow-50 border-b border-gray-200">
+      <div className="relative z-0 overflow-hidden bg-gradient-to-br from-white via-blue-50 to-yellow-50 border-b border-gray-200">
         {/* Decorative elements */}
         <div className="absolute left-8 top-8 text-4xl opacity-5">🅿️</div>
         <div className="absolute right-12 top-12 text-4xl opacity-5">🅿️</div>
@@ -154,7 +154,7 @@ export default function HomePage() {
 
       {/* Sticky SearchBar */}
       {isSearchBarSticky && (
-        <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 py-4 animate-slide-in" style={{ zIndex: 90 }}>
+        <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 py-4 animate-slide-in" style={{ zIndex: 50 }}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SearchBar />
           </div>

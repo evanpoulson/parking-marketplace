@@ -83,7 +83,7 @@ export default function SearchBar() {
   }
 
   return (
-    <div ref={searchBarRef} className="relative w-full max-w-4xl mx-auto" style={{ zIndex: 100 }}>
+    <div ref={searchBarRef} className="relative w-full max-w-4xl mx-auto" style={{ zIndex: 60 }}>
       {/* Search Bar */}
       <div className="bg-white rounded-full shadow-lg border-2 border-gray-200 hover:shadow-xl transition-all duration-300">
         <div className="flex items-center divide-x divide-gray-300">
@@ -135,7 +135,7 @@ export default function SearchBar() {
 
       {/* Where Dropdown */}
       {activeSection === 'where' && (
-        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in" style={{ zIndex: 110 }}>
+        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in" style={{ zIndex: 9999 }}>
           <div className="p-8">
             {/* Search Input */}
             <div className="mb-6">
@@ -221,7 +221,7 @@ export default function SearchBar() {
 
       {/* When Dropdown */}
       {activeSection === 'when' && (
-        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in" style={{ zIndex: 110 }}>
+        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-slide-in" style={{ zIndex: 9999 }}>
           <div className="p-8">
             {/* Quick Select Buttons */}
             <div className="mb-6">
