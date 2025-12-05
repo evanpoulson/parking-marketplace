@@ -24,7 +24,13 @@ const NEIGHBORHOODS = [
   'Cliff Bungalow',
 ]
 
-export default function SearchBar() {
+export default function SearchBar({
+  mode = 'full',
+  onCollapse
+}: {
+  mode?: 'full' | 'compact'
+  onCollapse?: () => void
+}) {
   const [activeSection, setActiveSection] = useState<'where' | 'when' | null>(null)
   const [searchText, setSearchText] = useState('')
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('')
@@ -97,6 +103,19 @@ export default function SearchBar() {
 
   return (
     <div ref={searchBarRef} className="relative w-full max-w-4xl mx-auto">
+      {/* Close button for modal mode */}
+      {onCollapse && (
+        <button
+          onClick={onCollapse}
+          className="absolute -top-12 right-0 text-white hover:text-gray-200 transition-colors"
+          aria-label="Close search"
+        >
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
       {/* Search Bar */}
       <div className="bg-white rounded-full shadow-lg border-2 border-gray-200 hover:shadow-xl transition-all duration-300">
         <div className="flex items-center divide-x divide-gray-300">

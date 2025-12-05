@@ -1,11 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
-import SearchBar from '@/components/SearchBar'
 
 interface Spot {
   id: string
@@ -26,58 +23,12 @@ interface NeighborhoodGroup {
 }
 
 export default function HomePage() {
-  const [user, setUser] = useState<User | null>(null)
-  const [userLoading, setUserLoading] = useState(true)
   const [spots, setSpots] = useState<Spot[]>([])
   const [spotsLoading, setSpotsLoading] = useState(true)
   const [error, setError] = useState('')
-  const [isSearchBarSticky, setIsSearchBarSticky] = useState(false)
-  const supabase = createClient()
-  const searchBarRef = useRef<HTMLDivElement>(null)
 
-  // Handle sticky search bar
+  // Fetch spots
   useEffect(() => {
-    const handleScroll = () => {
-      if (searchBarRef.current) {
-        const offset = searchBarRef.current.offsetTop
-        setIsSearchBarSticky(window.scrollY > offset - 20)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Fetch user
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        setUserLoading(true)
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-      } finally {
-        setUserLoading(false)
-      }
-    }
-
-    getUser()
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-      }
-    )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [supabase.auth])
-
-  // Fetch spots - only when user data is ready
-  useEffect(() => {
-    if (userLoading) return
-
     const fetchSpots = async () => {
       try {
         setSpotsLoading(true)
@@ -90,14 +41,7 @@ export default function HomePage() {
         }
 
         const data = await response.json()
-        const allSpots = data.spots || []
-
-        // Filter out the current user's own spots
-        const filteredSpots = user
-          ? allSpots.filter((spot: Spot) => spot.owner_id !== user.id)
-          : allSpots
-
-        setSpots(filteredSpots)
+        setSpots(data.spots || [])
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load parking spots')
       } finally {
@@ -106,7 +50,7 @@ export default function HomePage() {
     }
 
     fetchSpots()
-  }, [user, userLoading])
+  }, [])
 
   // Group spots by neighborhood
   const groupedSpots: NeighborhoodGroup[] = spots.reduce((acc, spot) => {
@@ -127,44 +71,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Condensed Hero Section with SearchBar */}
-      <div className="relative z-0 overflow-hidden bg-gradient-to-br from-white via-blue-50 to-yellow-50 border-b border-gray-200">
-        {/* Decorative elements */}
-        <div className="absolute left-8 top-8 text-4xl opacity-5">🅿️</div>
-        <div className="absolute right-12 top-12 text-4xl opacity-5">🅿️</div>
-
-        <div className="mx-auto max-w-7xl px-4 pt-12 pb-8 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-3">
-              Find Your Perfect Parking Spot in Calgary
-            </h1>
-            {user && (
-              <p className="text-lg text-gray-700">
-                Welcome back, <span className="font-semibold text-blue-800">{user.user_metadata?.name || 'there'}</span>!
-              </p>
-            )}
-          </div>
-
-          {/* SearchBar */}
-          <div ref={searchBarRef} className="relative">
-            <SearchBar />
-          </div>
-        </div>
-      </div>
-
-      {/* Sticky SearchBar */}
-      {isSearchBarSticky && (
-        <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 py-4 animate-slide-in" style={{ zIndex: 50 }}>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <SearchBar />
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           {/* Loading State */}
-          {(userLoading || spotsLoading) && (
+          {spotsLoading && (
             <div className="space-y-12">
               {[1, 2].map((section) => (
                 <div key={section}>
@@ -184,14 +94,14 @@ export default function HomePage() {
           )}
 
           {/* Error State */}
-          {!userLoading && !spotsLoading && error && (
+          {!spotsLoading && error && (
             <div className="animate-slide-in rounded-xl border-l-4 border-red-500 bg-red-50 p-6">
               <p className="text-center font-medium text-red-800">{error}</p>
             </div>
           )}
 
           {/* Empty State */}
-          {!userLoading && !spotsLoading && !error && spots.length === 0 && (
+          {!spotsLoading && !error && spots.length === 0 && (
             <div className="rounded-2xl border-2 border-dashed border-gray-300 bg-white p-16 text-center">
               <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-yellow-100">
                 <span className="text-6xl">🅿️</span>
@@ -202,26 +112,17 @@ export default function HomePage() {
               <p className="text-gray-600 mb-8 text-lg">
                 Be the first to list a spot in your neighborhood!
               </p>
-              {user ? (
-                <Link
-                  href="/list-spot"
-                  className="inline-block rounded-xl bg-yellow-400 px-8 py-4 font-bold text-gray-900 transition-all hover:bg-yellow-500 hover:shadow-lg"
-                >
-                  List Your First Spot
-                </Link>
-              ) : (
-                <Link
-                  href="/auth"
-                  className="inline-block rounded-xl bg-yellow-400 px-8 py-4 font-bold text-gray-900 transition-all hover:bg-yellow-500 hover:shadow-lg"
-                >
-                  Sign in to List a Spot
-                </Link>
-              )}
+              <Link
+                href="/list-spot"
+                className="inline-block rounded-xl bg-yellow-400 px-8 py-4 font-bold text-gray-900 transition-all hover:bg-yellow-500 hover:shadow-lg"
+              >
+                List a Spot
+              </Link>
             </div>
           )}
 
           {/* Neighborhood Carousels */}
-          {!userLoading && !spotsLoading && !error && groupedSpots.length > 0 && (
+          {!spotsLoading && !error && groupedSpots.length > 0 && (
             <div className="space-y-12">
               {groupedSpots.map((group, groupIndex) => (
                 <NeighborhoodCarousel
